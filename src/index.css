@@ -270,6 +270,116 @@ code {
   font-size: 1.8rem;
   letter-spacing: 1px;
 }
+
+
+
+
+
+.data-hero{
+  height: 140vh;
+  width: 100%;
+  background: url(./assets/data-bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-bottom: -500px;
+}
+
+
+.data-grid{
+  padding: 2rem;
+}
+
+.medics{
+  width: 100%;
+  object-fit: cover;
+  margin-bottom: 3rem;
+}
+
+.data-grid__content{
+  color: white;
+  text-align: center;
+}
+
+.data-grid__title{
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 2.5rem;
+}
+
+.data-grid__text{
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.question-container{
+background: #FFFFFF;
+box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
+border-radius: 7px;
+width: 90%;
+margin-left: auto;
+margin-right: auto;
+padding-inline: 2rem;
+padding-block: 3rem;
+}
+
+.question__category{
+ font-weight: 700;
+ color: rgba(0, 0, 0, 0.8);
+ font-size: 1.8rem;
+ text-align: center;
+ line-height: 2.4rem;
+}
+.question-flex{
+  align-items: center;
+}
+
+.question__number{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #E3E8FF;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  margin-top: 10px;
+}
+
+.question{
+  font-weight: 500;
+  font-size: 1.3rem;
+  width: 70%;
+}
+
+.answer-flex{
+  align-items: center;
+  margin-left: 45px;
+  cursor: pointer;
+  margin-bottom: 1.2rem;
+}
+
+.answer__label{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #F2F6FF;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+}
+
+.answer{
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+.active-answer{
+  background: #8352FD;
+}
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .announcement {
     -webkit-backdrop-filter: blur(40px);
@@ -309,6 +419,19 @@ code {
     margin-right: auto;
   }
   
+  .question-container{
+    width: 500px;
+  }
+
+  .data-hero{
+    height: 170vh;
+    margin-bottom: -600px;
+  }
+  .data-grid__content{
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 
@@ -380,5 +503,40 @@ code {
 
   .footer__text{
     font-size: 1.5rem;
+  }
+  .data-hero{
+    height: 115vh;
+    margin-bottom: 30px;
+  }
+  .data-grid{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    padding-top: 4rem;
+    column-gap: 4rem;
+  }
+  .medics{
+    margin-bottom: 0;
+  }
+  .data-grid__content{
+    width: 90%;
+    justify-self: end;
+    text-align: left;
+    margin-top: 50px;
+  }
+  .data-grid__title{
+    width: 90%;
+    font-size: 2.7rem;
+    line-height: 3.2rem;
+    letter-spacing: 1px;
+  }
+
+  .data-grid__text{
+    width: 90%;
+    font-size: 1.7rem;
+    line-height: 2.5rem;
+  }
+  .question-container{
+    width: 700px;
+    padding-inline: 4rem;
   }
 }
