@@ -2,6 +2,7 @@ import React from 'react'
 import briefCase from "../assets/brief-case.svg"
 import Idea from "../assets/Idea.svg"
 import Lines from "../assets/lines.svg"
+import Footer from '../components/Footer'
 const HomePage = () => {
     const announcements = [
         {
@@ -120,7 +121,7 @@ const HomePage = () => {
                      </div>
                     
                  </div>
-
+                            <Footer/>
             </>
              );
 }
