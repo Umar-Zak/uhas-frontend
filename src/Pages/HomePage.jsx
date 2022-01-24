@@ -3,6 +3,7 @@ import briefCase from "../assets/brief-case.svg"
 import Idea from "../assets/Idea.svg"
 import Lines from "../assets/lines.svg"
 import Footer from '../components/Footer'
+import {useNavigate} from "react-router-dom"
 const HomePage = () => {
     const announcements = [
         {
@@ -38,11 +39,18 @@ const HomePage = () => {
     writer:"Story By: Ankomah Prince"
 },
     ]
+
+    const navigate = useNavigate()
+
+    const goData = ()=>{
+      navigate("/questionaire")
+    }
     return ( <>
             <section className="hero">
             <div className="hero__overlay"></div>
             <nav className="nav-bar">
                 <button className="button button__primary">LOGIN</button>
+                <button onClick={goData} style={{marginLeft:"20px"}} className="button button__light">Data</button>
             </nav>
            <div className="block">
            <div className="hero__content">
@@ -121,7 +129,7 @@ const HomePage = () => {
                      </div>
                     
                  </div>
-                            <Footer/>
+             <Footer/>
             </>
              );
 }
