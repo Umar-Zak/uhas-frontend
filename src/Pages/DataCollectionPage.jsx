@@ -60,6 +60,10 @@ const DataCollectionPage = () => {
            <p className="answer">Tertiary</p>
        </div>
    </div>
+
+  <div className="next-container">
+  <button className="button button__primary button__normal">Next</button>
+  </div>
    <Footer/>
     </> );
 }
