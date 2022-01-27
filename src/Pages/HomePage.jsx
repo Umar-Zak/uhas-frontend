@@ -1,10 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
+import {useNavigate} from "react-router-dom"
+import {Formik} from "formik"
+import * as Yup from "yup"
+import {MdAccountCircle} from "react-icons/md"
+ import {login,logout,getCurrentUser} from "../utils/auth"
 import briefCase from "../assets/brief-case.svg"
 import Idea from "../assets/Idea.svg"
 import Lines from "../assets/lines.svg"
 import Footer from '../components/Footer'
-import {useNavigate} from "react-router-dom"
+import Loader from '../components/Loader'
+
+const validationSchema = Yup.object().shape({
+    email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
+    password:Yup.string().required("Password is required")
+})
+
 const HomePage = () => {
+    const [showForm,setShowForm] = useState(false)
+    const [isLoading,setIsLoading] = useState(false)
     const announcements = [
         {
             tag:"1",text:" New Covid-19 Variant  spotted in China"
@@ -45,12 +58,41 @@ const HomePage = () => {
     const goData = ()=>{
       navigate("/questionaire")
     }
+
+    
+
+    const toggleForm = ()=>{
+        setShowForm(!showForm)
+    }
+  
     return ( <>
+               { showForm &&  <div className="login-container">
+                     <Formik 
+                     initialValues={{email:"",password:""}} 
+                     validationSchema={validationSchema}
+                     onSubmit={values=> login(values,setIsLoading)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                              <input onChange={handleChange} name="email" type="email" placeholder="example@gmail.com" className="login-field" />
+                              {errors.email && touched.email && <p className="error">{errors.email}</p>}
+                              <input onChange={handleChange}  type="password" name="password" placeholder="************" className="login-field" />
+                              {errors.password && touched.password && <p className="error">{errors.password}</p>}
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Login</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>
+                }
             <section className="hero">
             <div className="hero__overlay"></div>
             <nav className="nav-bar">
-                <button className="button button__primary">LOGIN</button>
-                <button onClick={goData} style={{marginLeft:"20px"}} className="button button__light">Data</button>
+               {!getCurrentUser() && <button onClick={toggleForm} className="button button__primary">LOGIN</button>}
+               {getCurrentUser() && <a className="logout" onClick={logout} href="#">Log Out</a>}
+               {getCurrentUser() && <MdAccountCircle color="white" size={25} />}
+                {/* <button onClick={goData} style={{marginLeft:"20px"}} className="button button__light">Data</button> */}
             </nav>
            <div className="block">
            <div className="hero__content">
