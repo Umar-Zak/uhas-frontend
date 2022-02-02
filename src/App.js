@@ -7,6 +7,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import Dashboard from './Pages/DashBoard';
 function App() {
   return (
     <>
@@ -14,6 +15,10 @@ function App() {
   <Routes>
    
     <Route path="/questionaire" element={<DataCollectionPage/>} >
+
+    </Route>
+    <Route path="/dashboard" element={<Dashboard/>} >
+      
     </Route>
     <Route path="/" element={<HomePage/>}>
     </Route>

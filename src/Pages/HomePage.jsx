@@ -91,7 +91,7 @@ const HomePage = () => {
             <nav className="nav-bar">
                {!getCurrentUser() && <button onClick={toggleForm} className="button button__primary">LOGIN</button>}
                {getCurrentUser() && <a className="logout" onClick={logout} href="#">Log Out</a>}
-               {getCurrentUser() && <MdAccountCircle onClick={goData} color="white" size={25} />}
+               {getCurrentUser() && <MdAccountCircle style={{cursor:"pointer"}} onClick={goData} color="white" size={25} />}
                 {/* <button onClick={goData} style={{marginLeft:"20px"}} className="button button__light">Data</button> */}
             </nav>
            <div className="block">
