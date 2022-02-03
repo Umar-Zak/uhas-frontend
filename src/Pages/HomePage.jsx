@@ -56,7 +56,7 @@ const HomePage = () => {
     const navigate = useNavigate()
 
     const goData = ()=>{
-      navigate("/questionaire")
+      navigate("/dashboard")
     }
 
     

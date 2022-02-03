@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from "yup"
 import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
+import {AiFillPlusCircle} from "react-icons/ai"
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
-import {register} from "../utils/auth"
+import {getAllUsers, register} from "../utils/auth"
+import { getQuestionnaire } from '../utils/questionaire';
+import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
     username:Yup.string().required("Username is required"),
@@ -12,8 +15,20 @@ const validationSchema = Yup.object().shape({
 })
 
 const Dashboard = () => {
+   
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
+    const [questionnaire,setQuestionaire] = useState([])
+    const [users,setUsers] = useState([])
+    const [active,setActive] = useState("data")
+
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+        getQuestionnaire(setQuestionaire)
+        getAllUsers(setUsers)
+    },[])
+   
     return ( <>
              { showForm &&  <div className="login-container register-container">
                  <div className="cancel-container">
@@ -41,26 +56,80 @@ const Dashboard = () => {
                 </div>}
     <div className="dashboard">
         <div className="add-user-button">
+            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginRight:"15px",cursor:"pointer"}} size={40} />
             <div onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</div>
+             
         </div>
         <div className="counter-grid">
-            <div className="counter">
-                <h3 className="counter__title">Total Users</h3>
-                <p className="counter__text">128</p>
-            </div>
-            <div className="counter counter--orange">
+        <div onClick={()=>setActive("data")} className={`${active === "data"? "counter counter--orange active-counter":"counter counter--orange"}`}>
                 <h3 className="counter__title">Overall Data</h3>
-                <p className="counter__text">1048</p>
+                <p className="counter__text">{questionnaire.length}</p>
             </div>
-            <div className="counter counter--blue">
+            <div onClick={()=>setActive("users")} className={`${active === "users"? "counter  active-counter":"counter"}`}>
+                <h3 className="counter__title">Total Users</h3>
+                <p className="counter__text">{users.length}</p>
+            </div>
+           
+            <div className={`${active === "overall"? "counter counter--blue active-counter":"counter counter--blue"}`}>
                 <h3 className="counter__title">Monthly Updates</h3>
                 <p className="counter__text">540</p>
             </div>
         </div>
-        <div className="data-search">
-            <h2 className="data-overview">Data Overview</h2>
-            <input placeholder="Search data" type="text" className="search-input" />
-        </div>
+     {
+         active === "data" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Data Overview</h2>
+              <input placeholder="Search data" type="text" className="search-input" />
+          </div>
+          <table className="table table-responsive table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th scope="col">Woman ID</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Officer</th>
+                  </tr>
+              </thead>
+              <tbody>
+                 {questionnaire.map(({patient,officer,collected_on})=>(
+                      <tr className='t__row' style={{cursor:"pointer"}} key={collected_on}>
+                      <td>{patient.id}</td>
+                      <td>{collected_on.toString().substr(0,10)}</td>
+                      <td>{officer.name}</td>
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
+
+{
+         active === "users" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Active Users</h2>
+              <input placeholder="Search data" type="text" className="search-input" />
+          </div>
+          <table className="table table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th  scope="col">Username</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Joined On</th>
+                  </tr>
+              </thead>
+              <tbody>
+                 {users.map(({username,email,created_at})=>(
+                      <tr className='t__row' key={created_at}>
+                      <td>{username}</td>
+                      <td>{email}</td>
+                      <td>{created_at.toString().substr(0,15)}</td>
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
     </div> 
     <Footer/>
     </>);

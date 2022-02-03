@@ -49,3 +49,18 @@ export const logout = ()=>{
     localStorage.removeItem("token")
     window.location="/"
 }
+
+
+
+export const getAllUsers = async setUsers=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        axios.setJwt(jwt)
+        const {data} = await axios.get("/users")
+        setUsers(data)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
