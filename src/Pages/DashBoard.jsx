@@ -38,24 +38,35 @@ const Dashboard = () => {
       })
    }
 
+
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
-    const [questionnaire,setQuestionaire] = useState([])
-    const [users,setUsers] = useState([])
+    let [questionnaire,setQuestionaire] = useState([])
+    let [users,setUsers] = useState([])
     const [active,setActive] = useState("data")
-
+    const [search,setSearch] = useState("")
+    const [searchUser,setSearchUser] = useState("")
     const navigate = useNavigate()
 
     const goOverView = id =>{
         navigate(`/overview/${id}`)
     }
 
+    const handleSearch = text =>{
+        setSearch(text)
+    }
 
+    const handleSearchUser = text =>{
+        setSearchUser(text)
+    }
+         
     useEffect(()=>{
         getQuestionnaire(setQuestionaire)
         getAllUsers(setUsers)
     },[])
    
+    questionnaire = questionnaire.filter(ques=>ques.womanId.toLowerCase().startsWith(search.toLowerCase()))
+    users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
     return ( <>
              { showForm &&  <div className="login-container register-container">
                  <div className="cancel-container">
@@ -107,7 +118,7 @@ const Dashboard = () => {
          <div className="data">
          <div className="data-search">
               <h2 className="data-overview">Data Overview</h2>
-              <input placeholder="Search data" type="text" className="search-input" />
+              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search data" type="text" className="search-input" />
           </div>
           <table className="table table-responsive table-hover">
               <thead>
@@ -135,7 +146,7 @@ const Dashboard = () => {
          <div className="data">
          <div className="data-search">
               <h2 className="data-overview">Active Users</h2>
-              <input placeholder="Search data" type="text" className="search-input" />
+              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
           </div>
           <table className="table table-hover">
               <thead>
