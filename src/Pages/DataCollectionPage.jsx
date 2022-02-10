@@ -6,11 +6,11 @@ import Footer from '../components/Footer';
 import { getQuestions } from '../utils/questions';
 import Loader from '../components/Loader';
 import {postQuestionnaire} from "../utils/questionaire"
+import { getCurrentUser } from '../utils/auth';
 
 const validationSchema = Yup.object().shape({
     womanId:Yup.string().required("Woman ID is required"),
     localityId:Yup.string().required("Locality ID is required"),
-    interviewer:Yup.string().required("Interviewer is required"),
     age:Yup.number().min(1,"Age can not be less than 1")
     .required("Age is required"),
     weight:Yup.number().min(1,"Weight can not be less than 1")
@@ -42,6 +42,10 @@ const DataCollectionPage = () => {
     const [tgt,setTgt] = useState({})
     const [isFinished,setIsFinished] = useState(false)
     const [isLoading,setIsLoading] = useState(false)
+
+    const user = getCurrentUser()
+
+
     const handleNextClick = ()=>{
         tgt.value = ""
         if(!answered || questions.length-1===number) return
@@ -128,7 +132,6 @@ const DataCollectionPage = () => {
        {
            womanId:"",
            localityId:"",
-           interviewer:"",
            age:"",
            weight:"",
            height:"",
@@ -141,7 +144,7 @@ const DataCollectionPage = () => {
        }
    }
    validationSchema={validationSchema}
-   onSubmit={values=> postQuestionnaire({data:answers,patient:values.womanId},setIsLoading)}
+   onSubmit={values=> postQuestionnaire({data:answers, ...values},setIsLoading)}
    >
        {({handleChange,handleSubmit,errors,touched})=>(
           <>
@@ -155,8 +158,8 @@ const DataCollectionPage = () => {
            {errors["localityId"] && touched["localityId"]&& <p className="error">{errors["localityId"]}</p>}
            </div>
          <div>
-         <input onChange={handleChange} name="interviewer" type="text" placeholder="Interviewer" className="login-field" />
-         {errors["interviewer"] && touched["interviewer"]&& <p className="error">{errors["interviewer"]}</p>}
+         <input  value={user.username} disabled={true}  name="interviewer" type="text"  className="login-field" />
+         
          </div>
            <div>
            <input onChange={handleChange} name="age" type="number" placeholder="Woman's Age" className="login-field" />

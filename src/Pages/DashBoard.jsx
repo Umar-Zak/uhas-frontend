@@ -24,6 +24,11 @@ const Dashboard = () => {
 
     const navigate = useNavigate()
 
+    const goOverView = id =>{
+        navigate(`/overview/${id}`)
+    }
+
+
     useEffect(()=>{
         getQuestionnaire(setQuestionaire)
         getAllUsers(setUsers)
@@ -91,9 +96,9 @@ const Dashboard = () => {
                   </tr>
               </thead>
               <tbody>
-                 {questionnaire.map(({patient,officer,collected_on})=>(
-                      <tr className='t__row' style={{cursor:"pointer"}} key={collected_on}>
-                      <td>{patient.id}</td>
+                 {questionnaire.map(({womanId,officer,collected_on,_id})=>(
+                      <tr onClick={()=>goOverView(_id)} className='t__row' style={{cursor:"pointer"}} key={collected_on}>
+                      <td>{womanId}</td>
                       <td>{collected_on.toString().substr(0,10)}</td>
                       <td>{officer.name}</td>
                   </tr>

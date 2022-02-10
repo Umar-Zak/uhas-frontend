@@ -8,6 +8,7 @@ import {
   Route,
 } from "react-router-dom";
 import Dashboard from './Pages/DashBoard';
+import OverView from './Pages/OverView';
 function App() {
   return (
     <>
@@ -18,6 +19,9 @@ function App() {
 
     </Route>
     <Route path="/dashboard" element={<Dashboard/>} >
+      
+    </Route>
+    <Route path="/overview/:id" element={<OverView/>} >
       
     </Route>
     <Route path="/" element={<HomePage/>}>

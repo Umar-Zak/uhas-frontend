@@ -466,6 +466,7 @@ padding-block: 3rem;
   padding-inline: 2rem;
   padding-block: 4rem;
   margin-top: 100px;
+  overflow-x: scroll;
 }
 .counter-grid{
   display: grid;
@@ -564,6 +565,14 @@ padding-block: 3rem;
 
 .t__row{
   font-size: 1.3rem;
+}
+.section{
+  margin-bottom: 70px;
+}
+.basic-data{
+  margin-bottom: 20px;
+  font-weight: 500;
+  font-size: 20px;
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
@@ -778,6 +787,9 @@ padding-block: 3rem;
   }
   .dashboard{
     max-width: 900px;
+  }
+  .dashboard--large{
+    max-width: 1100px;
   }
 }
 
