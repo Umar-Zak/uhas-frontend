@@ -68,6 +68,11 @@ code {
   
   cursor: pointer;
 }
+.delete{
+  background:red;
+  padding-block: 3px;
+  width: 100px;
+}
 
 .button__primary{
   background: var(--color-primary);
@@ -86,6 +91,7 @@ code {
 .button__normal{
   border-radius: 2px;
 }
+
 .button__light{
   background: white;
   color: #111111;
@@ -574,6 +580,8 @@ padding-block: 3rem;
   font-weight: 500;
   font-size: 20px;
 }
+
+
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .announcement {

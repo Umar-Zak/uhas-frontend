@@ -2,6 +2,7 @@
 import {toast} from "react-toastify"
 import jwtDecode from "jwt-decode"
 import axios from "./http"
+import http from "./http"
 export const login = async (values,setIsLoading)=>{
     setIsLoading(true)
     try {
@@ -63,4 +64,16 @@ export const getAllUsers = async setUsers=>{
 
         toast.error("Unexpected error! Try again")
     }
+}
+
+export const deleteUser = async id =>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.delete(`/user/${id}`)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    } 
 }

@@ -3,9 +3,13 @@ import * as Yup from "yup"
 import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
 import {AiFillPlusCircle} from "react-icons/ai"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
-import {getAllUsers, register} from "../utils/auth"
+import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
 import { getQuestionnaire } from '../utils/questionaire';
 import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
@@ -15,7 +19,25 @@ const validationSchema = Yup.object().shape({
 })
 
 const Dashboard = () => {
-   
+    const MySwal = withReactContent(Swal)
+
+   const handleDelete = id =>{
+    MySwal.fire({
+        title: 'Do you want to delete this user?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        denyButtonText: `Quit`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            await deleteUser(id)
+            getAllUsers(setUsers)
+        } else if (result.isDenied) {
+          Swal.fire('Alright got it', '', 'info')
+        }
+      })
+   }
+
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
     const [questionnaire,setQuestionaire] = useState([])
@@ -121,14 +143,16 @@ const Dashboard = () => {
                       <th  scope="col">Username</th>
                       <th scope="col">Email</th>
                       <th scope="col">Joined On</th>
+                      {getCurrentUser().isAdmin && <th scope="col">Manage</th>}
                   </tr>
               </thead>
               <tbody>
-                 {users.map(({username,email,created_at})=>(
+                 {users.map(({username,email,created_at,_id})=>(
                       <tr className='t__row' key={created_at}>
                       <td>{username}</td>
                       <td>{email}</td>
                       <td>{created_at.toString().substr(0,15)}</td>
+                     {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>}
                   </tr>
                  ))}
               </tbody>
