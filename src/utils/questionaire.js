@@ -47,3 +47,7 @@ export const getQuestionById = async (id,setData) =>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const transformQuestionnaire = data => {
+   return data.map(d=> ({womanId:d.womanId,localityId:d.localityId,triceps:d.triceps,biceps:d.biceps,weight:d.weight,height:d.height,pressure:d.pressure,officer:d.officer.name,collect_on:d.collected_on.toString().substr(0,10),hip:d.hip,fat:d.fat,age:d.age}))
+}

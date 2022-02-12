@@ -5,12 +5,14 @@ import {MdCancel} from "react-icons/md"
 import {AiFillPlusCircle} from "react-icons/ai"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 
 
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire } from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire } from '../utils/questionaire';
 import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
@@ -65,9 +67,51 @@ const Dashboard = () => {
         getAllUsers(setUsers)
     },[])
    
+    const _export = React.useRef(null);
+
+   const excelExport = () => {
+    if (_export.current !== null) {
+      _export.current.save();
+    }
+  };
+
+    const transformedData = transformQuestionnaire(questionnaire)
+    
+
     questionnaire = questionnaire.filter(ques=>ques.womanId.toLowerCase().startsWith(search.toLowerCase()))
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
-    return ( <>
+   
+   
+   return ( <>
+
+<div hidden>
+<ExcelExport  data={transformedData} ref={_export}>
+      <Grid
+        data={transformedData}
+        style={{
+          height: "420px",
+        }}
+      >
+        <GridToolbar>
+         
+        </GridToolbar>
+        <GridColumn field="womanId" title="Woman ID" width="50px" />
+        <GridColumn field="localityId" title="Locality ID" width="350px" />
+        <GridColumn field="officer" title="Officer" />
+        <GridColumn field="collect_on" title="Date Taken" />
+        <GridColumn field="height" title="Woman's Height" />
+        <GridColumn field="weight" title="Woman's Weight" />
+        <GridColumn field="biceps" title="Woman's Biceps" />
+        <GridColumn field="triceps" title="Woman's Triceps" />
+        <GridColumn field="hip" title="Woman's Hip" />
+        <GridColumn field="pressure" title="Woman's Pressure" />
+        <GridColumn field="fat" title="Woman's Fat" />
+        <GridColumn field="age" title="Woman's Age" />
+      </Grid>
+    </ExcelExport>
+
+
+</div>
              { showForm &&  <div className="login-container register-container">
                  <div className="cancel-container">
                     <MdCancel onClick={()=>setShowForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
@@ -94,7 +138,14 @@ const Dashboard = () => {
                 </div>}
     <div className="dashboard">
         <div className="add-user-button">
-            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginRight:"15px",cursor:"pointer"}} size={40} />
+        <button
+            title="Export Excel"
+            className="button button__light"
+            onClick={excelExport}
+          >
+            Export
+          </button>
+            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
             <div onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</div>
              
         </div>
