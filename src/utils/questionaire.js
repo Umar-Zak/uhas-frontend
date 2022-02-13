@@ -61,3 +61,12 @@ export const transformQuestionnaire = data => {
   })
 return transformed
 }
+
+
+export const uploadFile = async (setLoading,setShowFileForm) => {
+    setLoading(true)
+    setTimeout(()=>{
+        setLoading(false)
+        setShowFileForm(false)
+    },5000)
+}

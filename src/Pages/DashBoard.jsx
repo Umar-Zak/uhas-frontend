@@ -12,7 +12,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire } from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile} from '../utils/questionaire';
 import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
@@ -22,6 +22,7 @@ const validationSchema = Yup.object().shape({
 
 const Dashboard = () => {
     const MySwal = withReactContent(Swal)
+    const _export = React.useRef(null);
 
    const handleDelete = id =>{
     MySwal.fire({
@@ -43,11 +44,13 @@ const Dashboard = () => {
 
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
+    const [showFileForm,setShowFileForm] = useState(false)
     let [questionnaire,setQuestionaire] = useState([])
     let [users,setUsers] = useState([])
     const [active,setActive] = useState("data")
     const [search,setSearch] = useState("")
     const [searchUser,setSearchUser] = useState("")
+    const [file,setFile] = useState("")
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -67,14 +70,14 @@ const Dashboard = () => {
         getAllUsers(setUsers)
     },[])
    
-    const _export = React.useRef(null);
+    
 
    const excelExport = () => {
     if (_export.current !== null) {
       _export.current.save();
     }
   };
- let transformedData = [];
+   let transformedData = [];
     if (questionnaire.length > 0)  transformedData = transformQuestionnaire(questionnaire)
     
 
@@ -189,8 +192,23 @@ const Dashboard = () => {
                          )}
                      </Formik>
                 </div>}
+                {showFileForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowFileForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                 <input accept='.xlsx' onChange={({target})=>setFile(target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
+                 { !isLoading &&  <button disabled={!file}  onClick={()=>uploadFile(setIsLoading,setShowFileForm)}  className="button button__primary button__full">Upload</button>}
+                 { isLoading &&  <Loader/>}
+                </div>}
     <div className="dashboard">
         <div className="add-user-button">
+        <button
+        onClick={()=>setShowFileForm(true)}
+        style={{marginRight:"15px"}}
+            className="button button__light"
+          >
+        Import
+        </button>
         <button
             title="Export Excel"
             className="button button__light"
