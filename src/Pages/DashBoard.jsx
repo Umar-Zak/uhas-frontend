@@ -197,7 +197,7 @@ const Dashboard = () => {
                     <MdCancel onClick={()=>setShowFileForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
                  <input accept='.xlsx' onChange={({target})=>setFile(target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
-                 { !isLoading &&  <button disabled={!file}  onClick={()=>uploadFile(setIsLoading,setShowFileForm)}  className="button button__primary button__full">Upload</button>}
+                 { !isLoading &&  <button disabled={!file}  onClick={()=>uploadFile(file,setIsLoading,setShowFileForm)}  className="button button__primary button__full">Upload</button>}
                  { isLoading &&  <Loader/>}
                 </div>}
     <div className="dashboard">

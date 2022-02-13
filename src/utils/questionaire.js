@@ -63,10 +63,21 @@ return transformed
 }
 
 
-export const uploadFile = async (setLoading,setShowFileForm) => {
+export const uploadFile = async (file,setLoading,setShowFileForm) => {
     setLoading(true)
-    setTimeout(()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const formData = new FormData()
+        formData.append("excel",file)
+        await http.post("/uploads",formData)
         setLoading(false)
         setShowFileForm(false)
-    },5000)
+    } catch ({response}) {
+        setLoading(false)
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+    
 }
