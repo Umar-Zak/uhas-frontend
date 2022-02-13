@@ -49,5 +49,15 @@ export const getQuestionById = async (id,setData) =>{
 }
 
 export const transformQuestionnaire = data => {
-   return data.map(d=> ({womanId:d.womanId,localityId:d.localityId,triceps:d.triceps,biceps:d.biceps,weight:d.weight,height:d.height,pressure:d.pressure,officer:d.officer.name,collect_on:d.collected_on.toString().substr(0,10),hip:d.hip,fat:d.fat,age:d.age}))
+  const transformed = data.map(d=> {
+  const rawData =  {womanId:d.womanId,localityId:d.localityId,triceps:d.triceps,biceps:d.biceps,weight:d.weight,height:d.height,pressure:d.pressure,officer:d.officer.name,collect_on:d.collected_on.toString().substr(0,10),hip:d.hip,fat:d.fat,age:d.age}
+      const dat = data[0].data 
+      for (let i = 0; i <  dat.length; i++){
+          const question = dat[i]
+          rawData[question.number] =  question.answer
+      }
+   
+   return rawData
+  })
+return transformed
 }
