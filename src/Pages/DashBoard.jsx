@@ -111,6 +111,7 @@ const Dashboard = () => {
         <GridColumn field="pressure" title="Woman's Pressure" />
         <GridColumn field="fat" title="Woman's Fat" />
         <GridColumn field="age" title="Woman's Age" />
+        <GridColumn field="waist" title="Woman's Waist" />
         <GridColumn field="101" title="Question Reference 101" />
         <GridColumn field="102" title="Question Reference 102" />
         <GridColumn field="103" title="Question Reference 103" />

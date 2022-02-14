@@ -17,10 +17,10 @@ const OverView = () => {
     let section_c=[];
     let section_d =[];
    if(data){
-     section_a = data.data.filter(d=>d.section.startsWith(SECTIONS.a))
-     section_b = data.data.filter(d=>d.section.startsWith(SECTIONS.b))
-     section_c = data.data.filter(d=>d.section.startsWith(SECTIONS.c))
-     section_d = data.data.filter(d=>d.section.startsWith(SECTIONS.d))
+     section_a = data.data.filter(d=>d.section?.startsWith(SECTIONS.a))
+     section_b = data.data.filter(d=>d.section?.startsWith(SECTIONS.b))
+     section_c = data.data.filter(d=>d.section?.startsWith(SECTIONS.c))
+     section_d = data.data.filter(d=>d.section?.startsWith(SECTIONS.d))
    }
 
     useEffect(()=>{

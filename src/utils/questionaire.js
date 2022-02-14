@@ -50,7 +50,7 @@ export const getQuestionById = async (id,setData) =>{
 
 export const transformQuestionnaire = data => {
   const transformed = data.map(d=> {
-  const rawData =  {womanId:d.womanId,localityId:d.localityId,triceps:d.triceps,biceps:d.biceps,weight:d.weight,height:d.height,pressure:d.pressure,officer:d.officer.name,collect_on:d.collected_on.toString().substr(0,10),hip:d.hip,fat:d.fat,age:d.age}
+  const rawData =  {womanId:d.womanId,localityId:d.localityId,triceps:d.triceps,biceps:d.biceps,weight:d.weight,height:d.height,pressure:d.pressure,officer:d.officer.name,collect_on:d.collected_on.toString().substr(0,10),hip:d.hip,fat:d.fat,age:d.age,waist:d.waist}
       const dat = data[0].data 
       for (let i = 0; i <  dat.length; i++){
           const question = dat[i]
@@ -65,7 +65,8 @@ return transformed
 
 export const uploadFile = async (file,setLoading,setShowFileForm) => {
     setLoading(true)
-    const jwt = localStorage.getItem("token")
+    setTimeout(async()=>{
+        const jwt = localStorage.getItem("token")
     try {
         http.setJwt(jwt)
         const formData = new FormData()
@@ -79,5 +80,6 @@ export const uploadFile = async (file,setLoading,setShowFileForm) => {
 
         toast.error("Unexpected error! Try again")
     }
+    },4000)
     
 }
