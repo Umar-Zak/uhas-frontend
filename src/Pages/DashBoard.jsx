@@ -12,7 +12,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile} from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests} from '../utils/questionaire';
 import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
@@ -45,6 +45,7 @@ const Dashboard = () => {
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
     const [showFileForm,setShowFileForm] = useState(false)
+    const [requests,setRequests] = useState([])
     let [questionnaire,setQuestionaire] = useState([])
     let [users,setUsers] = useState([])
     const [active,setActive] = useState("data")
@@ -68,6 +69,7 @@ const Dashboard = () => {
     useEffect(()=>{
         getQuestionnaire(setQuestionaire)
         getAllUsers(setUsers)
+        getRequests(setRequests)
     },[])
    
     
@@ -235,9 +237,9 @@ const Dashboard = () => {
                 <p className="counter__text">{users.length}</p>
             </div>
            
-            <div className={`${active === "overall"? "counter counter--blue active-counter":"counter counter--blue"}`}>
-                <h3 className="counter__title">Monthly Updates</h3>
-                <p className="counter__text">540</p>
+            <div onClick={()=>setActive("requests")} className={`${active === "requests"? "counter counter--blue active-counter":"counter counter--blue"}`}>
+                <h3 className="counter__title">Data Requests</h3>
+                <p className="counter__text"> {requests.length}</p>
             </div>
         </div>
      {
@@ -291,6 +293,35 @@ const Dashboard = () => {
                       <td>{email}</td>
                       <td>{created_at.toString().substr(0,15)}</td>
                      {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>}
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
+     {
+         active === "requests" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Active Users</h2>
+              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
+          </div>
+          <table className="table table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th  scope="col">Name of Enquirer</th>
+                      <th scope="col">Email Address</th>
+                      <th scope="col">Phone Number</th>
+                      {/* {getCurrentUser().isAdmin && <th scope="col">Manage</th>} */}
+                  </tr>
+              </thead>
+              <tbody>
+                 {requests.map(({ name,email,phone,_id})=>(
+                      <tr className='t__row' key={_id}>
+                      <td>{name}</td>
+                      <td>{email}</td>
+                      <td>{phone}</td>
+                     {/* {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>} */}
                   </tr>
                  ))}
               </tbody>

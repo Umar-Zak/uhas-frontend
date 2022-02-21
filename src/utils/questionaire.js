@@ -83,3 +83,26 @@ export const uploadFile = async (file,setLoading,setShowFileForm) => {
     },4000)
     
 }
+
+
+export const requestData = async(body,setLoading)=>{
+    setLoading(true)
+    try {
+        await http.post("/requests",body)
+        setLoading(false)
+        window.location = "/"
+    } catch ({response}) {
+        setLoading(false)
+
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getRequests = async(setRequests)=> {
+  const jwt = localStorage.getItem("token")
+  http.setJwt(jwt)
+  const {data} = await http.get("/requests")
+  setRequests(data)
+}

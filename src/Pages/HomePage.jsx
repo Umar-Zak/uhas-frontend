@@ -4,6 +4,7 @@ import {Formik} from "formik"
 import * as Yup from "yup"
 import {MdAccountCircle} from "react-icons/md"
  import {login,logout,getCurrentUser} from "../utils/auth"
+ import { requestData } from '../utils/questionaire'
 import briefCase from "../assets/brief-case.svg"
 import Idea from "../assets/Idea.svg"
 import Lines from "../assets/lines.svg"
@@ -15,9 +16,16 @@ const validationSchema = Yup.object().shape({
     password:Yup.string().required("Password is required")
 })
 
+const validateRequest = Yup.object().shape({
+    email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
+    name:Yup.string().required("Name is required"),
+    phone:Yup.string().required("Phone number")
+})
+
 const HomePage = () => {
     const [showForm,setShowForm] = useState(false)
     const [isLoading,setIsLoading] = useState(false)
+    const [showRequestForm,setShowRequestForm] =useState( false)
     const announcements = [
         {
             tag:"1",text:" New Covid-19 Variant  spotted in China"
@@ -86,6 +94,28 @@ const HomePage = () => {
                      </Formik>
                 </div>
                 }
+                { showRequestForm &&  <div className="login-container">
+                     <Formik 
+                     initialValues={{email:"",name:"",phone:""}} 
+                     validationSchema={validateRequest}
+                     onSubmit={values=> requestData(values,setIsLoading)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                             <input onChange={handleChange} name="name" type="email" placeholder="John Doe" className="login-field" />
+                              {errors.name && touched.name && <p className="error">{errors.name}</p>}
+                              <input onChange={handleChange} name="email" type="email" placeholder="example@gmail.com" className="login-field" />
+                              {errors.email && touched.email && <p className="error">{errors.email}</p>}
+                              <input onChange={handleChange}  type="tel" name="phone" placeholder="0201348856" className="login-field" />
+                              {errors.phone && touched.phone && <p className="error">{errors.phone}</p>}
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Request</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>
+                }
             <section className="hero">
             <div className="hero__overlay"></div>
             <nav className="nav-bar">
@@ -106,7 +136,7 @@ const HomePage = () => {
                     and nutritional status of Ghanaian women
                     </p>
                     <div className="button--container">
-                    <button className="button button__light button__default">
+                    <button onClick={()=>setShowRequestForm(!showRequestForm)} className="button button__light button__default">
                     Request for data
                     </button>
                     </div>
