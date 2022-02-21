@@ -82,8 +82,12 @@ const Dashboard = () => {
     
 
 
-    questionnaire = questionnaire.filter(ques=>ques.womanId.toLowerCase().startsWith(search.toLowerCase()))
+    questionnaire = questionnaire.
+    filter(ques=>ques.womanId
+        .toLowerCase()
+        .startsWith(search.toLowerCase()) || ques?.collected_on.toString().startsWith(search))
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
+   
    
    
    return ( <>
@@ -241,7 +245,7 @@ const Dashboard = () => {
          <div className="data">
          <div className="data-search">
               <h2 className="data-overview">Data Overview</h2>
-              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search data" type="text" className="search-input" />
+              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search by ID or date" type="text" className="search-input" />
           </div>
           <table className="table table-responsive table-hover">
               <thead>
