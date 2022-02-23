@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom"
 import {Formik} from "formik"
 import * as Yup from "yup"
 import {MdAccountCircle} from "react-icons/md"
+import {MdCancel} from "react-icons/md"
  import {login,logout,getCurrentUser} from "../utils/auth"
  import { requestData } from '../utils/questionaire'
 import briefCase from "../assets/brief-case.svg"
@@ -19,7 +20,8 @@ const validationSchema = Yup.object().shape({
 const validateRequest = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
     name:Yup.string().required("Name is required"),
-    phone:Yup.string().required("Phone number")
+    phone:Yup.string().required("Phone number"),
+    description:Yup.string().required("Request description")
 })
 
 const HomePage = () => {
@@ -95,8 +97,11 @@ const HomePage = () => {
                 </div>
                 }
                 { showRequestForm &&  <div className="login-container">
+                <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowRequestForm(false)} style={{cursor:"pointer"}} size={25} color='black'/>
+                 </div>
                      <Formik 
-                     initialValues={{email:"",name:"",phone:""}} 
+                     initialValues={{email:"",name:"",phone:"",description:""}} 
                      validationSchema={validateRequest}
                      onSubmit={values=> requestData(values,setIsLoading)}
                      >
@@ -108,6 +113,8 @@ const HomePage = () => {
                               {errors.email && touched.email && <p className="error">{errors.email}</p>}
                               <input onChange={handleChange}  type="tel" name="phone" placeholder="0201348856" className="login-field" />
                               {errors.phone && touched.phone && <p className="error">{errors.phone}</p>}
+                              <input onChange={handleChange}  type="text" maxLength={30} name="description" placeholder="Describe the kind of data you need" className="login-field" />
+                              {errors.description && touched.description && <p className="error">{errors.description}</p>}
                           { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Request</button>}
                           { isLoading &&  <Loader/>}
                             </>

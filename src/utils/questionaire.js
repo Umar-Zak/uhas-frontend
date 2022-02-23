@@ -106,3 +106,36 @@ export const getRequests = async(setRequests)=> {
   const {data} = await http.get("/requests")
   setRequests(data)
 }
+
+
+export const postDataSet = async (body,setLoading)=>{
+ setLoading(true)
+ const jwt = localStorage.getItem("token")
+ try {
+     http.setJwt(jwt)
+     await http.post("/dataset",body)
+     window.location = "/dashboard"
+ } catch ({response}) {
+    setLoading(false)
+
+    if(response.status < 500) return toast.error(response.data)
+
+    toast.error("Unexpected error! Try again")
+ }
+}
+
+export const postProject = async (body,setLoading)=>{
+    setLoading(true)
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.post("/project",body)
+        window.location = "/dashboard"
+    } catch ({response}) {
+       setLoading(false)
+   
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }

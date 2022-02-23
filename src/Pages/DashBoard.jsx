@@ -3,6 +3,7 @@ import * as Yup from "yup"
 import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
 import {AiFillPlusCircle} from "react-icons/ai"
+import { uploadPaper } from '../utils/firebase';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
@@ -12,12 +13,23 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests} from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject} from '../utils/questionaire';
 import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
     username:Yup.string().required("Username is required"),
     password:Yup.string().required("Password is required")
+})
+
+const validateDataset = Yup.object().shape({
+    title:Yup.string().required("Title is required").label("Title"),
+    description:Yup.string().required("Description is required").label("Description")
+})
+
+
+const validatePaper = Yup.object().shape({
+    heading:Yup.string().required("Paper heading is required").label("Heading"),
+    file:Yup.string().required("Paper file is required").label("Paper file")
 })
 
 const Dashboard = () => {
@@ -45,6 +57,9 @@ const Dashboard = () => {
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
     const [showFileForm,setShowFileForm] = useState(false)
+    const [showDatasetForm,setShowDatasetForm] = useState(false)
+    const [showProjectForm,setShowProjectForm] = useState(false)
+    const [showPaperForm,setShowPaperForm] = useState(false)
     const [requests,setRequests] = useState([])
     let [questionnaire,setQuestionaire] = useState([])
     let [users,setUsers] = useState([])
@@ -89,7 +104,6 @@ const Dashboard = () => {
         .toLowerCase()
         .startsWith(search.toLowerCase()) || ques?.collected_on.toString().startsWith(search))
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
-   
    
    
    return ( <>
@@ -199,6 +213,80 @@ const Dashboard = () => {
                          )}
                      </Formik>
                 </div>}
+
+
+                { showDatasetForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowDatasetForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{title:"",description:"" }} 
+                     validationSchema={validateDataset}
+                     onSubmit={(values)=>postDataSet(values,setIsLoading)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                              <input onChange={handleChange} name="title" type="text" placeholder="Title of dataset" className="login-field" />
+                              {errors.title && touched.title && <p className="error">{errors.title}</p>}
+                              <textarea onChange={handleChange} name="description" t  placeholder="Description of dataset" className="login-field"></textarea>
+                              {errors.description && touched.description && <p className="error">{errors.description}</p>}
+                              
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Add</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>}
+
+
+                { showProjectForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowProjectForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{title:"",description:"" }} 
+                     validationSchema={validateDataset}
+                     onSubmit={(values)=>postProject(values,setIsLoading)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                              <input onChange={handleChange} name="title" type="text" placeholder="Title of project" className="login-field" />
+                              {errors.title && touched.title && <p className="error">{errors.title}</p>}
+                              <textarea onChange={handleChange} name="description" t  placeholder="Description of project" className="login-field"></textarea>
+                              {errors.description && touched.description && <p className="error">{errors.description}</p>}
+                              
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Add</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>}
+
+                { showPaperForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowPaperForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{heading:"",file:"" }} 
+                     validationSchema={validatePaper}
+                     onSubmit={(values)=>uploadPaper(values,setIsLoading)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched,setFieldValue})=>(
+                            <>
+                              <input onChange={handleChange} name="heading" type="text" placeholder="Heading of paper work" className="login-field" />
+                              {errors.heading && touched.heading && <p className="error">{errors.heading}</p>}
+                              <input accept='.pdf' onChange={({target})=>setFieldValue("file",target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
+                              {errors.file && touched.file && <p className="error">{errors.file}</p>}
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Post</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>}
+
                 {showFileForm &&  <div className="login-container register-container">
                  <div className="cancel-container">
                     <MdCancel onClick={()=>setShowFileForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
@@ -206,6 +294,9 @@ const Dashboard = () => {
                  <input accept='.xlsx' onChange={({target})=>setFile(target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
                  { !isLoading &&  <button disabled={!file}  onClick={()=>uploadFile(file,setIsLoading,setShowFileForm)}  className="button button__primary button__full">Upload</button>}
                  { isLoading &&  <Loader/>}
+
+
+
                 </div>}
     <div className="dashboard">
         <div className="add-user-button">
@@ -225,6 +316,36 @@ const Dashboard = () => {
           </button>
             <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
             <div onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</div>
+             
+       
+        </div>
+       
+        <div className="add-user-button">
+        <button
+            title="Export Excel"
+            className="button button__primary"
+            style={{marginRight:"15px"}}
+            // onClick={()=>setShowProjectForm(true)}
+          >
+           Upload zips
+          </button>
+        <button
+            title="Export Excel"
+            className="button button__light"
+            style={{marginRight:"15px"}}
+            onClick={()=>setShowProjectForm(true)}
+          >
+            Add project
+          </button>
+        <button
+            title="Export Excel"
+            className="button button__light"
+            style={{marginRight:"15px"}}
+            onClick={()=>setShowDatasetForm(true)}
+          >
+            Add dataset
+          </button>
+            <button onClick={()=>setShowPaperForm(true)} className="button button__light">Upload paper</button>
              
         </div>
         <div className="counter-grid">
@@ -312,15 +433,17 @@ const Dashboard = () => {
                       <th  scope="col">Name of Enquirer</th>
                       <th scope="col">Email Address</th>
                       <th scope="col">Phone Number</th>
+                      <th scope="col">Description</th>
                       {/* {getCurrentUser().isAdmin && <th scope="col">Manage</th>} */}
                   </tr>
               </thead>
               <tbody>
-                 {requests.map(({ name,email,phone,_id})=>(
+                 {requests.map(({ name,email,phone,_id,description})=>(
                       <tr className='t__row' key={_id}>
                       <td>{name}</td>
                       <td>{email}</td>
                       <td>{phone}</td>
+                      <td>{description}</td>
                      {/* {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>} */}
                   </tr>
                  ))}
