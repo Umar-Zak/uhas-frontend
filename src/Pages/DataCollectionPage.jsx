@@ -7,6 +7,7 @@ import { getQuestions } from '../utils/questions';
 import Loader from '../components/Loader';
 import {postQuestionnaire} from "../utils/questionaire"
 import { getCurrentUser } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object().shape({
     womanId:Yup.string().required("Woman ID is required"),
@@ -44,7 +45,7 @@ const DataCollectionPage = () => {
     const [isLoading,setIsLoading] = useState(false)
 
     const user = getCurrentUser()
-
+    const navigate = useNavigate()
 
     const handleNextClick = ()=>{
         tgt.value = ""
@@ -121,6 +122,7 @@ const DataCollectionPage = () => {
    </div>}
 
   <div className="next-container">
+    <button style={{marginRight:"15px"}} onClick={()=>navigate("/dashboard")} className="button button__light button__normal">Quit</button>
  {number < questions.length-1 && <button onClick={handleNextClick} className="button button__primary button__normal">Next</button>}
  {number === questions.length-1 && !isFinished && <button onClick={handleFinish}  className="button button__primary button__normal">Finish</button>}
   </div>

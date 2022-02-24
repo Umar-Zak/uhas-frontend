@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {useNavigate} from "react-router-dom"
 import {Formik} from "formik"
 import * as Yup from "yup"
 import {MdAccountCircle} from "react-icons/md"
 import {MdCancel} from "react-icons/md"
  import {login,logout,getCurrentUser} from "../utils/auth"
- import { requestData } from '../utils/questionaire'
+ import { getDataSets, getPapers, requestData } from '../utils/questionaire'
 import briefCase from "../assets/brief-case.svg"
 import Idea from "../assets/Idea.svg"
 import Lines from "../assets/lines.svg"
@@ -28,41 +28,16 @@ const HomePage = () => {
     const [showForm,setShowForm] = useState(false)
     const [isLoading,setIsLoading] = useState(false)
     const [showRequestForm,setShowRequestForm] =useState( false)
-    const announcements = [
-        {
-            tag:"1",text:" New Covid-19 Variant  spotted in China"
-        },
-        {
-            tag:"2",text:"Government to Give grants to teenage mothers"
-        },
-        {
-            tag:"3",text:"Breast cancer on the rise in Oti regigion"
-        },
-        {
-            tag:"4",text:" New vaccines available for AIDS patients"
-        },
-        {
-            tag:"5",text:"Health workers to embark on 3 weeks strike"
-        },
-    ]
-    const works =[
-        {
-            title:"New Covid-19 Variant  spotted in China",
-            date:"Jan 19",
-            writer:"Story By: Laryea Israel"
-    },
-    {
-        title:" 19% of women with disabilities were....",
-        date:"Dec 05",
-        writer:"Story By: Mac Manu"
-},
-{
-    title:"UHAS to embark on 30 day health tour",
-    date:"Oct 30",
-    writer:"Story By: Ankomah Prince"
-},
-    ]
+    const [announcements, SetAnnouncements] = useState([])
+    const [selectedDataSet,setSelectedDataSet] = useState("")
+    const [works,setWorks] = useState([])
 
+    useEffect(()=>{
+        getDataSets(SetAnnouncements)
+        getPapers(setWorks)
+    },[])
+
+   
     const navigate = useNavigate()
 
     const goData = ()=>{
@@ -153,17 +128,22 @@ const HomePage = () => {
             </section>
             <div className="announcement-container">
                 <div className="announcement">
+                    <h2 className="announcement__title">Available Datasets</h2>
                  {
-                     announcements.map( (a) =>(
-                        <a href="#">
+                     announcements.map( (a,index) =>(
+                        <a onClick={()=>setSelectedDataSet(a._id)} className={`${selectedDataSet === a._id ? "announcement__item expanded":"announcement__item"}`}>
                         <div className="simple-flex">
                              <div className="circle">
-                                 <p className="circled__text">{a.tag}</p>
+                                 <p className="circled__text">{index+1}</p>
                              </div>
                              <p className="announcement__text">
-                              {a.text}
+                              {a.title}
                              </p>
+                             
                          </div>
+                         <p className="announcement__description">
+                              {a.description}
+                             </p>
                         </a>
                      ))
                  }
@@ -184,23 +164,24 @@ const HomePage = () => {
                          <div className="news-grid"> 
                             {
                                 works.map((work)=>(
-                                   <a href="#">
+                                   <a href={`${work.file}`} target="_blank">
                                         <div className="news">
                                     <div className="simple-flex">
                                         <img src={Idea} alt="" className="idea" />
                                         <div className="news__header">
                                             <h5 className="news__title">
-                                            {work.title}
+                                            {`${work.heading.substr(0,21)}${work.heading.length>= 21 ? "...":""}`}
                                             </h5>
                                             <div className="news__date">
-                                                <p>{work.date}</p>
+                                                <p>{work.date.toString().substr(0,10)}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <p className="news__writer">
-                                    {work.writer}
+                                   Paper By : {work.user}
                                     </p>
                                 </div>
+                                
                                    </a>
                                 ))
                             }

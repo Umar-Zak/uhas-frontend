@@ -40,3 +40,25 @@ export const uploadPaper = async(body,setLoading)=>{
         })
     });
 }
+
+
+export const uploadZip= async(body,setLoading)=>{
+    setLoading(true)
+    const jwt = localStorage.getItem("token")
+    const storageRef = ref(storage, body.file.name);
+
+    uploadBytes(storageRef, body.file).then((snapshot) => {
+        getDownloadURL(ref(storage, body.file.name)).then(async url=>{
+            try {
+                http.setJwt(jwt)
+                await http.post("/zip",{file:url})
+                window.location = "/dashboard"
+            } catch ({response}) {
+                setLoading(false)
+                if(response.status < 500) return toast.error(response.data)
+
+                toast.error("Unexpected error! Try again")
+            }
+        })
+    });
+}

@@ -3,18 +3,22 @@ import * as Yup from "yup"
 import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
 import {AiFillPlusCircle} from "react-icons/ai"
-import { uploadPaper } from '../utils/firebase';
+import {FaChevronCircleLeft} from "react-icons/fa"
+
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-
+import { useNavigate } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
 import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject} from '../utils/questionaire';
-import { useNavigate } from 'react-router-dom';
+import { uploadPaper,uploadZip } from '../utils/firebase';
+
+
+
 const validationSchema = Yup.object().shape({
     email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
     username:Yup.string().required("Username is required"),
@@ -30,6 +34,10 @@ const validateDataset = Yup.object().shape({
 const validatePaper = Yup.object().shape({
     heading:Yup.string().required("Paper heading is required").label("Heading"),
     file:Yup.string().required("Paper file is required").label("Paper file")
+})
+
+const validateZip = Yup.object().shape({
+    file:Yup.string().required("Zip file is required").label("Zip file")
 })
 
 const Dashboard = () => {
@@ -60,6 +68,7 @@ const Dashboard = () => {
     const [showDatasetForm,setShowDatasetForm] = useState(false)
     const [showProjectForm,setShowProjectForm] = useState(false)
     const [showPaperForm,setShowPaperForm] = useState(false)
+    const [showZipForm,setShowZipForm] = useState(false)
     const [requests,setRequests] = useState([])
     let [questionnaire,setQuestionaire] = useState([])
     let [users,setUsers] = useState([])
@@ -72,6 +81,7 @@ const Dashboard = () => {
     const goOverView = id =>{
         navigate(`/overview/${id}`)
     }
+ 
 
     const handleSearch = text =>{
         setSearch(text)
@@ -287,6 +297,28 @@ const Dashboard = () => {
                      </Formik>
                 </div>}
 
+
+                { showZipForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowZipForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{file:"" }} 
+                     validationSchema={validateZip}
+                     onSubmit={(values)=>uploadZip(values,setIsLoading)}
+                     >
+                         {({handleSubmit,errors,touched,setFieldValue})=>(
+                            <>
+                              <input accept='.zip' onChange={({target})=>setFieldValue("file",target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
+                              {errors.file && touched.file && <p className="error">{errors.file}</p>}
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Upload</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>}
+
                 {showFileForm &&  <div className="login-container register-container">
                  <div className="cancel-container">
                     <MdCancel onClick={()=>setShowFileForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
@@ -300,6 +332,7 @@ const Dashboard = () => {
                 </div>}
     <div className="dashboard">
         <div className="add-user-button">
+        <FaChevronCircleLeft onClick={()=>navigate("/")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
         <button
         onClick={()=>setShowFileForm(true)}
         style={{marginRight:"15px"}}
@@ -325,7 +358,7 @@ const Dashboard = () => {
             title="Export Excel"
             className="button button__primary"
             style={{marginRight:"15px"}}
-            // onClick={()=>setShowProjectForm(true)}
+            onClick={()=>setShowZipForm(true)}
           >
            Upload zips
           </button>

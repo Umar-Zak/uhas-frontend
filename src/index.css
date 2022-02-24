@@ -153,8 +153,31 @@ code {
   display: flex;
   justify-content: center;
   height: 600px;
+  
 }
- 
+
+.announcement__title{
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  font-size: 2.3rem;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+}
+
+.announcement__description{
+ color: black;
+ margin-left: 10px;
+ font-weight: 300;
+ font-size: 1.2rem;
+ line-height: 1.7rem;
+ min-height: 0;
+display: none;
+}
+
+.expanded .announcement__description{
+  display: block;
+}
 
 .announcement{
   width: 100%;
@@ -164,7 +187,16 @@ code {
   position: absolute;
   top: -60px;
   padding: 4rem;
-  z-index: 1000 !important
+  z-index: 1000 !important;
+  overflow-y: scroll;
+}
+.announcement__item{
+  border: 0.5px solid white;
+  display: block;
+ margin-bottom: 10px;
+ padding: 10px;
+ border-radius: 5px;
+ cursor: pointer;
 }
 
 .circle{
@@ -181,7 +213,7 @@ code {
 
 .simple-flex{
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .announcement__text{
@@ -230,13 +262,14 @@ code {
   margin-left: 20px;
   display: flex;
   margin-top: -12px;
+  flex-grow: 1;
+  justify-content: space-between;
 }
 
 .news__date{
-  margin-left: 40px;
   padding-block: 5px;
   padding-inline: 1rem;
-  width: 40%;
+  width: 110px;
   background: white;
   border-radius: 10px;
   height: 40px;
@@ -257,7 +290,7 @@ code {
 
 .news__writer{
   margin-left: 50px;
-  margin-top: -28px;
+  margin-top: -15px;
   font-weight: 500;
   color: #000000;
   font-size: 1.2rem;
@@ -722,6 +755,8 @@ padding-block: 3rem;
    .news-grid{
      width: 70%;
     justify-self: end;
+    height: 300px;
+    overflow-y: scroll;
    }
 
    .lines{

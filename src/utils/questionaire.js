@@ -139,3 +139,13 @@ export const postProject = async (body,setLoading)=>{
        toast.error("Unexpected error! Try again")
     }
    }
+
+   export const getDataSets = async (setDataSet)=>{
+    const {data} = await http.get("/datasets")
+    setDataSet(data)
+   }
+
+   export const getPapers = async (setPapers)=>{
+    const {data} = await http.get("/papers")
+    setPapers(data)
+   }
