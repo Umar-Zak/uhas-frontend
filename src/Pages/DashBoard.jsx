@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
-import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
+import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
 import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
@@ -314,16 +314,18 @@ const Dashboard = () => {
                       <th  scope="col">Username</th>
                       <th scope="col">Email</th>
                       <th scope="col">Joined On</th>
-                      {getCurrentUser().isAdmin && <th scope="col">Manage</th>}
+                      <th scope="col">Privileges</th>
+                      <th scope="col">Manage</th>
                   </tr>
               </thead>
               <tbody>
-                 {users.map(({username,email,created_at,_id})=>(
+                 {users.map(({username,email,created_at,_id,isAdmin})=>(
                       <tr className='t__row' key={created_at}>
                       <td>{username}</td>
                       <td>{email}</td>
                       <td>{created_at.toString().substr(0,15)}</td>
-                     {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>}
+                      {getCurrentUser().isAdmin && <td><button onClick={()=> priv(_id,getAllUsers,setUsers)}  style={{background:"green",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">{isAdmin ? "Revoke":"Add"}</button></td>}
+                     {getCurrentUser().isAdmin && <td>  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button></td>}
                   </tr>
                  ))}
               </tbody>

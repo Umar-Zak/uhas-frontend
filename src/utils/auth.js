@@ -77,3 +77,16 @@ export const deleteUser = async id =>{
         toast.error("Unexpected error! Try again")
     } 
 }
+
+export const priv = async (id,getAllUsers,setUsers)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.put(`/priv/${id}`)
+         await getAllUsers(setUsers)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    } 
+}
