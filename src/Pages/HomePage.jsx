@@ -45,8 +45,8 @@ const HomePage = () => {
       navigate("/dashboard")
     }
 
-    
-
+    const facultyWorks = works.filter(a=> a.type === "faculty")
+    const studentWorks = works.filter(a=> a.type === "student")
     const toggleForm = ()=>{
         setShowForm(!showForm)
     }
@@ -116,10 +116,10 @@ const HomePage = () => {
                     DEPARTMENT OF FAMILY AND COMMUNITY HEALTH
                     UNIVERSITY OF HEALTH AND ALLIED SCIENCES, HO, VOLTA REGION, GHANA
                     </h1>
-                    <p className="hero__tagline">
+                    {/* <p className="hero__tagline">
                     Effect of soymilk-burkina intake on gut microbiome 
                     and nutritional status of Ghanaian women
-                    </p>
+                    </p> */}
                     <div className="button--container">
                     <button onClick={()=>setShowRequestForm(!showRequestForm)} className="button button__light button__default">
                     Request for data
@@ -153,20 +153,47 @@ const HomePage = () => {
                 </div>
             </div>
                  <div className="works-section">
-                 <img src={Lines} alt="" className="lines" />
+                 {/* <img src={Lines} alt="" className="lines" /> */}
                      <div className="block paper-works">
                          <div>
                              <h3 className="paper-works__title">
-                             Our Latest Paper works
+                            Students Paper Works
                              </h3>
                              <p className="paper-works__tagline">
-                             For the sake of public information, we get you informed on our research works
+                             For the sake of public information, we get you 
+                             informed on our research works done by our prestigious students
                              </p>
-                             <img src={briefCase} alt="" className="paper-works__image" />
+                             {studentWorks.length === 0 && <p style={{fontSize:"13px"}}>No students papers at the moment</p>}
+                             {
+                                studentWorks.map((work)=>(
+                                   <a style={{width:"400px",display:"block"}} href={`${work.file}`} target="_blank">
+                                        <div className="news">
+                                    <div className="simple-flex">
+                                        <img src={Idea} alt="" className="idea" />
+                                        <div className="news__header">
+                                            <h5 className="news__title">
+                                            {`${work.heading.substr(0,21)}${work.heading.length>= 21 ? "...":""}`}
+                                            </h5>
+                                            <div className="news__date">
+                                                <p>{work.date.toString().substr(0,10)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="news__writer">
+                                   Paper By : {work.user}
+                                    </p>
+                                </div>
+                                
+                                   </a>
+                                ))
+                            }
                          </div>
                          <div className="news-grid"> 
+                         <h3 className="paper-works__title">
+                             Faculty Paper Works
+                             </h3>
                             {
-                                works.map((work)=>(
+                                facultyWorks.map((work)=>(
                                    <a href={`${work.file}`} target="_blank">
                                         <div className="news">
                                     <div className="simple-flex">
