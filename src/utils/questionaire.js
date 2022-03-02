@@ -150,6 +150,10 @@ export const postProject = async (body,setLoading)=>{
     setPapers(data)
    }
 
+   export const getProject = async (setProjects)=>{
+    const {data} = await http.get("/projects")
+    setProjects(data)
+   }
 
    export const deleteDataSet = async id =>{
     const jwt = localStorage.getItem("token")
@@ -169,6 +173,18 @@ export const postProject = async (body,setLoading)=>{
     try {
         http.setJwt(jwt)
         await http.delete(`/papers/${id}`)
+    } catch ({response}) {
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
+
+   export const deleteProject = async id =>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.delete(`/projects/${id}`)
     } catch ({response}) {
        if(response.status < 500) return toast.error(response.data)
    

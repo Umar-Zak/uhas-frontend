@@ -648,6 +648,11 @@ padding-block: 3rem;
   letter-spacing: 1px;
  
 }
+
+.active--link{
+  color: black ;
+}
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .announcement {
     -webkit-backdrop-filter: blur(40px);

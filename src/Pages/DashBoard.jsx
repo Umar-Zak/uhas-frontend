@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper} from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -91,7 +91,7 @@ const Dashboard = () => {
 
    const handleDeletePaper = id =>{
     MySwal.fire({
-        title: 'Do you want to delete this dataset?',
+        title: 'Do you want to delete this paper?',
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: 'Delete',
@@ -100,6 +100,23 @@ const Dashboard = () => {
         if (result.isConfirmed) {
             await deletePaper(id)
             getPapers(setPapers)
+        } else if (result.isDenied) {
+          Swal.fire('Alright got it', '', 'info')
+        }
+      })
+   }
+
+   const handleDeleteProject = id =>{
+    MySwal.fire({
+        title: 'Do you want to delete this project?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        denyButtonText: `Quit`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            await deleteProject(id)
+            getProject(setProjects)
         } else if (result.isDenied) {
           Swal.fire('Alright got it', '', 'info')
         }
@@ -124,6 +141,7 @@ const Dashboard = () => {
     const [activeLink,setActiveLink] = useState("overview")
     const [datasets,setDataSets] = useState([])
     const [papers,setPapers] = useState([])
+    const [projects,setProjects] = useState([])
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -145,6 +163,7 @@ const Dashboard = () => {
         getRequests(setRequests)
         getDataSets(setDataSets)
         getPapers(setPapers)
+        getProject(setProjects)
     },[])
    
 
@@ -169,40 +188,40 @@ const Dashboard = () => {
    <div className="dashboard--header">
    <div style={{overflowX:"scroll"}} className="add-user-button">
    <FaChevronCircleLeft onClick={()=>navigate("/")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
-        <button
+        { getCurrentUser().isAdmin && <button
         onClick={()=>setShowFileForm(true)}
         style={{marginRight:"15px"}}
             className="button button__light"
           >
         Import
-        </button>
-         <button
+        </button>}
+        {getCurrentUser().isAdmin &&  <button
             title="Export Excel"
             className="button button__light"
             onClick={excelExport}
             style={{marginInline:"15px",cursor:"pointer"}}
           >
             Export
-          </button>
+          </button>}
    
-            <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>
+          {getCurrentUser().isAdmin &&   <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
             <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
-        <button
+       {getCurrentUser().isAdmin &&  <button
             title="Export Excel"
             className="button button__primary"
             style={{marginRight:"15px"}}
             onClick={()=>setShowZipForm(true)}
           >
            Upload zips
-          </button>
-        <button
+          </button>}
+        {getCurrentUser().isAdmin && <button
             title="Export Excel"
             className="button button__light"
             style={{marginRight:"15px"}}
             onClick={()=>setShowProjectForm(true)}
           >
             Add project
-          </button>
+          </button>}
         <button
             title="Export Excel"
             className="button button__light"
@@ -217,26 +236,26 @@ const Dashboard = () => {
    </div>
 
 <div className="dashboard--grid">
-    <div className="sidebar">
+    {getCurrentUser().isAdmin &&  <div className="sidebar">
         <div onClick={()=>setActiveLink("overview")} className="link--item">
         <GrOverview size={30} color="green" />
-        <a href="#" className="link">OverView</a>
+        <a href="#" className={`${activeLink === "overview" ? "link active--link": "link"}`}>OverView</a>
         </div>
         <div onClick={()=>setActiveLink("datasets")} className="link--item">
         <BiData size={30}  />
-        <a href="#" className="link">Data Sets</a>
+        <a href="#" className={`${activeLink === "datasets" ? "link active--link": "link"}`}>Data Sets</a>
         </div>
         <div onClick={()=>setActiveLink("papers")} className="link--item">
         <FaNewspaper size={30}  />
-        <a href="#" className="link">Uploaded Papers</a>
+        <a href="#" className={`${activeLink === "papers" ? "link active--link": "link"}`}>Uploaded Papers</a>
         </div>
         <div onClick={()=>setActiveLink("projects")} className="link--item">
         <AiFillProject size={30}  />
-        <a href="#" className="link">Ongoing Projects</a>
+        <a href="#" className={`${activeLink === "projects" ? "link active--link": "link"}`}>Ongoing Projects</a>
         </div>
     </div>
-
-   {activeLink === "overview" && <div className="dashboard">
+}
+   {getCurrentUser().isAdmin && activeLink === "overview" && <div className="dashboard">
        
       
         <div className="counter-grid">
@@ -392,6 +411,31 @@ const Dashboard = () => {
         </TableBody>
       </Table>
     </div>}
+   { activeLink === "projects" &&
+   <div className="dashboard">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Project Title</TableCell>
+            <TableCell align="left">Description</TableCell>
+            <TableCell align="left">Manage</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {projects.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell align="left">{row.title}</TableCell>
+              <TableCell align="left">{row.description}</TableCell>
+              <TableCell align="left"><button onClick={()=>handleDeleteProject(row._id)} style={{background:"red",width:"100px",color:"white",padding:"4px"}} className="button">Delete</button> </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+    }
 </div>
 
 <div hidden>
