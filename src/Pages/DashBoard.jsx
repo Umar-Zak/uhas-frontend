@@ -4,7 +4,17 @@ import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
 import {AiFillPlusCircle} from "react-icons/ai"
 import {FaChevronCircleLeft} from "react-icons/fa"
-
+import {GrOverview} from "react-icons/gr"
+import {AiFillProject} from "react-icons/ai"
+import {BiData} from "react-icons/bi"
+import {FaNewspaper} from "react-icons/fa"
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
@@ -14,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject} from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -33,7 +43,8 @@ const validateDataset = Yup.object().shape({
 
 const validatePaper = Yup.object().shape({
     heading:Yup.string().required("Paper heading is required").label("Heading"),
-    file:Yup.string().required("Paper file is required").label("Paper file")
+    file:Yup.string().required("Paper file is required").label("Paper file"),
+    type:Yup.string().required("Paper type is required").label("Paper type")
 })
 
 const validateZip = Yup.object().shape({
@@ -61,6 +72,40 @@ const Dashboard = () => {
       })
    }
 
+   const handleDeleteDataSet = id =>{
+    MySwal.fire({
+        title: 'Do you want to delete this dataset?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        denyButtonText: `Quit`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            await deleteDataSet(id)
+            getDataSets(setDataSets)
+        } else if (result.isDenied) {
+          Swal.fire('Alright got it', '', 'info')
+        }
+      })
+   }
+
+   const handleDeletePaper = id =>{
+    MySwal.fire({
+        title: 'Do you want to delete this dataset?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        denyButtonText: `Quit`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            await deletePaper(id)
+            getPapers(setPapers)
+        } else if (result.isDenied) {
+          Swal.fire('Alright got it', '', 'info')
+        }
+      })
+   }
+
 
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
@@ -76,6 +121,9 @@ const Dashboard = () => {
     const [search,setSearch] = useState("")
     const [searchUser,setSearchUser] = useState("")
     const [file,setFile] = useState("")
+    const [activeLink,setActiveLink] = useState("overview")
+    const [datasets,setDataSets] = useState([])
+    const [papers,setPapers] = useState([])
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -95,9 +143,10 @@ const Dashboard = () => {
         getQuestionnaire(setQuestionaire)
         getAllUsers(setUsers)
         getRequests(setRequests)
+        getDataSets(setDataSets)
+        getPapers(setPapers)
     },[])
    
-    
 
    const excelExport = () => {
     if (_export.current !== null) {
@@ -117,6 +166,233 @@ const Dashboard = () => {
    
    
    return ( <>
+   <div className="dashboard--header">
+   <div style={{overflowX:"scroll"}} className="add-user-button">
+   <FaChevronCircleLeft onClick={()=>navigate("/")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
+        <button
+        onClick={()=>setShowFileForm(true)}
+        style={{marginRight:"15px"}}
+            className="button button__light"
+          >
+        Import
+        </button>
+         <button
+            title="Export Excel"
+            className="button button__light"
+            onClick={excelExport}
+            style={{marginInline:"15px",cursor:"pointer"}}
+          >
+            Export
+          </button>
+   
+            <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>
+            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
+        <button
+            title="Export Excel"
+            className="button button__primary"
+            style={{marginRight:"15px"}}
+            onClick={()=>setShowZipForm(true)}
+          >
+           Upload zips
+          </button>
+        <button
+            title="Export Excel"
+            className="button button__light"
+            style={{marginRight:"15px"}}
+            onClick={()=>setShowProjectForm(true)}
+          >
+            Add project
+          </button>
+        <button
+            title="Export Excel"
+            className="button button__light"
+            style={{marginRight:"15px"}}
+            onClick={()=>setShowDatasetForm(true)}
+          >
+            Add dataset
+          </button>
+            <button onClick={()=>setShowPaperForm(true)} className="button button__light">Upload paper</button>
+             
+        </div>
+   </div>
+
+<div className="dashboard--grid">
+    <div className="sidebar">
+        <div onClick={()=>setActiveLink("overview")} className="link--item">
+        <GrOverview size={30} color="green" />
+        <a href="#" className="link">OverView</a>
+        </div>
+        <div onClick={()=>setActiveLink("datasets")} className="link--item">
+        <BiData size={30}  />
+        <a href="#" className="link">Data Sets</a>
+        </div>
+        <div onClick={()=>setActiveLink("papers")} className="link--item">
+        <FaNewspaper size={30}  />
+        <a href="#" className="link">Uploaded Papers</a>
+        </div>
+        <div onClick={()=>setActiveLink("projects")} className="link--item">
+        <AiFillProject size={30}  />
+        <a href="#" className="link">Ongoing Projects</a>
+        </div>
+    </div>
+
+   {activeLink === "overview" && <div className="dashboard">
+       
+      
+        <div className="counter-grid">
+        <div onClick={()=>setActive("data")} className={`${active === "data"? "counter counter--orange active-counter":"counter counter--orange"}`}>
+                <h3 className="counter__title">Overall Data</h3>
+                <p className="counter__text">{questionnaire.length}</p>
+            </div>
+            <div onClick={()=>setActive("users")} className={`${active === "users"? "counter  active-counter":"counter"}`}>
+                <h3 className="counter__title">Total Users</h3>
+                <p className="counter__text">{users.length}</p>
+            </div>
+           
+            <div onClick={()=>setActive("requests")} className={`${active === "requests"? "counter counter--blue active-counter":"counter counter--blue"}`}>
+                <h3 className="counter__title">Data Requests</h3>
+                <p className="counter__text"> {requests.length}</p>
+            </div>
+        </div>
+     {
+         active === "data" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Data Overview</h2>
+              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search by ID or date" type="text" className="search-input" />
+          </div>
+          <table className="table table-responsive table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th scope="col">Woman ID</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Officer</th>
+                  </tr>
+              </thead>
+              <tbody>
+                 {questionnaire.map(({womanId,officer,collected_on,_id})=>(
+                      <tr onClick={()=>goOverView(_id)} className='t__row' style={{cursor:"pointer"}} key={collected_on}>
+                      <td>{womanId}</td>
+                      <td>{collected_on.toString().substr(0,10)}</td>
+                      <td>{officer.name}</td>
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
+
+{
+         active === "users" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Active Users</h2>
+              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
+          </div>
+          <table className="table table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th  scope="col">Username</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Joined On</th>
+                      {getCurrentUser().isAdmin && <th scope="col">Manage</th>}
+                  </tr>
+              </thead>
+              <tbody>
+                 {users.map(({username,email,created_at,_id})=>(
+                      <tr className='t__row' key={created_at}>
+                      <td>{username}</td>
+                      <td>{email}</td>
+                      <td>{created_at.toString().substr(0,15)}</td>
+                     {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>}
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
+     {
+         active === "requests" &&
+         <div className="data">
+         <div className="data-search">
+              <h2 className="data-overview">Active Users</h2>
+              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
+          </div>
+          <table className="table table-hover">
+              <thead>
+                  <tr className='t__head'>
+                      <th  scope="col">Name of Enquirer</th>
+                      <th scope="col">Email Address</th>
+                      <th scope="col">Phone Number</th>
+                      <th scope="col">Description</th>
+                  </tr>
+              </thead>
+              <tbody>
+                 {requests.map(({ name,email,phone,_id,description})=>(
+                      <tr className='t__row' key={_id}>
+                      <td>{name}</td>
+                      <td>{email}</td>
+                      <td>{phone}</td>
+                      <td>{description}</td>
+                  </tr>
+                 ))}
+              </tbody>
+          </table>
+         </div>
+     }
+    </div>}
+   {activeLink === "datasets" && <div className="dashboard">
+
+   <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>DataSet Title</TableCell>
+            <TableCell align="center">Description</TableCell>
+            <TableCell align="center">Manage</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {datasets.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell align="left">{row.title}</TableCell>
+              <TableCell align="left">{row.description}</TableCell>
+              <TableCell align="right"><button onClick={()=>handleDeleteDataSet(row._id)} style={{background:"red",width:"100px",color:"white",padding:"4px"}} className="button">Delete</button> </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>}
+    {activeLink === "papers" && <div className="dashboard">
+    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Paper Heading</TableCell>
+            <TableCell align="left">Uploaded By</TableCell>
+            <TableCell align="left">Upload Date</TableCell>
+            <TableCell align="left">Paper Category Type</TableCell>
+            <TableCell align="left">Manage</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {papers.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell align="left">{row.heading}</TableCell>
+              <TableCell align="left">{row.user}</TableCell>
+              <TableCell align="left">{row.date.toString().substr(0,10)}</TableCell>
+              <TableCell align="left">{row.type}</TableCell>
+              <TableCell align="left"><button onClick={()=>handleDeletePaper(row._id)} style={{background:"red",width:"100px",color:"white",padding:"4px"}} className="button">Delete</button> </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>}
+</div>
 
 <div hidden>
 <ExcelExport  data={transformedData} ref={_export}>
@@ -279,7 +555,7 @@ const Dashboard = () => {
                     <MdCancel onClick={()=>setShowPaperForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
                      <Formik 
-                     initialValues={{heading:"",file:"" }} 
+                     initialValues={{heading:"",file:"",type:"" }} 
                      validationSchema={validatePaper}
                      onSubmit={(values)=>uploadPaper(values,setIsLoading)}
                      >
@@ -289,6 +565,12 @@ const Dashboard = () => {
                               {errors.heading && touched.heading && <p className="error">{errors.heading}</p>}
                               <input accept='.pdf' onChange={({target})=>setFieldValue("file",target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
                               {errors.file && touched.file && <p className="error">{errors.file}</p>}
+                              <select className="login-field" onChange={handleChange} name="type" id="">
+                                  <option value="">Choose paper type</option>
+                                  <option value="student">Student</option>
+                                  <option value="faculty">Faculty</option>
+                              </select>
+                              {errors.type && touched.type && <p className="error">{errors.type}</p>}
                           { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Post</button>}
                           { isLoading &&  <Loader/>}
                             </>
@@ -330,161 +612,7 @@ const Dashboard = () => {
 
 
                 </div>}
-    <div className="dashboard">
-        <div className="add-user-button">
-        <FaChevronCircleLeft onClick={()=>navigate("/")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
-        <button
-        onClick={()=>setShowFileForm(true)}
-        style={{marginRight:"15px"}}
-            className="button button__light"
-          >
-        Import
-        </button>
-        <button
-            title="Export Excel"
-            className="button button__light"
-            onClick={excelExport}
-          >
-            Export
-          </button>
-            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
-            <div onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</div>
-             
-       
-        </div>
-       
-        <div className="add-user-button">
-        <button
-            title="Export Excel"
-            className="button button__primary"
-            style={{marginRight:"15px"}}
-            onClick={()=>setShowZipForm(true)}
-          >
-           Upload zips
-          </button>
-        <button
-            title="Export Excel"
-            className="button button__light"
-            style={{marginRight:"15px"}}
-            onClick={()=>setShowProjectForm(true)}
-          >
-            Add project
-          </button>
-        <button
-            title="Export Excel"
-            className="button button__light"
-            style={{marginRight:"15px"}}
-            onClick={()=>setShowDatasetForm(true)}
-          >
-            Add dataset
-          </button>
-            <button onClick={()=>setShowPaperForm(true)} className="button button__light">Upload paper</button>
-             
-        </div>
-        <div className="counter-grid">
-        <div onClick={()=>setActive("data")} className={`${active === "data"? "counter counter--orange active-counter":"counter counter--orange"}`}>
-                <h3 className="counter__title">Overall Data</h3>
-                <p className="counter__text">{questionnaire.length}</p>
-            </div>
-            <div onClick={()=>setActive("users")} className={`${active === "users"? "counter  active-counter":"counter"}`}>
-                <h3 className="counter__title">Total Users</h3>
-                <p className="counter__text">{users.length}</p>
-            </div>
-           
-            <div onClick={()=>setActive("requests")} className={`${active === "requests"? "counter counter--blue active-counter":"counter counter--blue"}`}>
-                <h3 className="counter__title">Data Requests</h3>
-                <p className="counter__text"> {requests.length}</p>
-            </div>
-        </div>
-     {
-         active === "data" &&
-         <div className="data">
-         <div className="data-search">
-              <h2 className="data-overview">Data Overview</h2>
-              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search by ID or date" type="text" className="search-input" />
-          </div>
-          <table className="table table-responsive table-hover">
-              <thead>
-                  <tr className='t__head'>
-                      <th scope="col">Woman ID</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Officer</th>
-                  </tr>
-              </thead>
-              <tbody>
-                 {questionnaire.map(({womanId,officer,collected_on,_id})=>(
-                      <tr onClick={()=>goOverView(_id)} className='t__row' style={{cursor:"pointer"}} key={collected_on}>
-                      <td>{womanId}</td>
-                      <td>{collected_on.toString().substr(0,10)}</td>
-                      <td>{officer.name}</td>
-                  </tr>
-                 ))}
-              </tbody>
-          </table>
-         </div>
-     }
-
-{
-         active === "users" &&
-         <div className="data">
-         <div className="data-search">
-              <h2 className="data-overview">Active Users</h2>
-              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
-          </div>
-          <table className="table table-hover">
-              <thead>
-                  <tr className='t__head'>
-                      <th  scope="col">Username</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Joined On</th>
-                      {getCurrentUser().isAdmin && <th scope="col">Manage</th>}
-                  </tr>
-              </thead>
-              <tbody>
-                 {users.map(({username,email,created_at,_id})=>(
-                      <tr className='t__row' key={created_at}>
-                      <td>{username}</td>
-                      <td>{email}</td>
-                      <td>{created_at.toString().substr(0,15)}</td>
-                     {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>}
-                  </tr>
-                 ))}
-              </tbody>
-          </table>
-         </div>
-     }
-     {
-         active === "requests" &&
-         <div className="data">
-         <div className="data-search">
-              <h2 className="data-overview">Active Users</h2>
-              <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
-          </div>
-          <table className="table table-hover">
-              <thead>
-                  <tr className='t__head'>
-                      <th  scope="col">Name of Enquirer</th>
-                      <th scope="col">Email Address</th>
-                      <th scope="col">Phone Number</th>
-                      <th scope="col">Description</th>
-                      {/* {getCurrentUser().isAdmin && <th scope="col">Manage</th>} */}
-                  </tr>
-              </thead>
-              <tbody>
-                 {requests.map(({ name,email,phone,_id,description})=>(
-                      <tr className='t__row' key={_id}>
-                      <td>{name}</td>
-                      <td>{email}</td>
-                      <td>{phone}</td>
-                      <td>{description}</td>
-                     {/* {getCurrentUser().isAdmin &&  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button>} */}
-                  </tr>
-                 ))}
-              </tbody>
-          </table>
-         </div>
-     }
-    </div> 
+     
     <Footer/>
     </>);
 }

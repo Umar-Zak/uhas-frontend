@@ -29,7 +29,7 @@ export const uploadPaper = async(body,setLoading)=>{
         getDownloadURL(ref(storage, body.file.name)).then(async url=>{
             try {
                 http.setJwt(jwt)
-                await http.post("/paper",{heading:body.heading,file:url})
+                await http.post("/paper",{heading:body.heading,file:url,type:body.type})
                 window.location = "/dashboard"
             } catch ({response}) {
                 setLoading(false)

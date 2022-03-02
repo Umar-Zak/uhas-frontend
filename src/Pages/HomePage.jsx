@@ -18,10 +18,11 @@ const validationSchema = Yup.object().shape({
 })
 
 const validateRequest = Yup.object().shape({
-    email:Yup.string().email("Must be a valid email").required("Email address is reqquired"),
-    name:Yup.string().required("Name is required"),
-    phone:Yup.string().required("Phone number"),
-    description:Yup.string().required("Request description")
+    email:Yup.string().email("Must be a valid email").required("Email address is reqquired").label("Email"),
+    name:Yup.string().required("Name is required").label("Name"),
+    phone:Yup.string().required("Phone number is required").label("Phone number"),
+    description:Yup.string().required("Request description is required").label("Description"),
+    reason:Yup.string().required("Reason for request is required").label("Reason for reaquest")
 })
 
 const HomePage = () => {
@@ -76,7 +77,7 @@ const HomePage = () => {
                     <MdCancel onClick={()=>setShowRequestForm(false)} style={{cursor:"pointer"}} size={25} color='black'/>
                  </div>
                      <Formik 
-                     initialValues={{email:"",name:"",phone:"",description:""}} 
+                     initialValues={{email:"",name:"",phone:"",description:"",reason:""}} 
                      validationSchema={validateRequest}
                      onSubmit={values=> requestData(values,setIsLoading)}
                      >
@@ -88,8 +89,10 @@ const HomePage = () => {
                               {errors.email && touched.email && <p className="error">{errors.email}</p>}
                               <input onChange={handleChange}  type="tel" name="phone" placeholder="0201348856" className="login-field" />
                               {errors.phone && touched.phone && <p className="error">{errors.phone}</p>}
-                              <input onChange={handleChange}  type="text" maxLength={30} name="description" placeholder="Describe the kind of data you need" className="login-field" />
+                              <input onChange={handleChange}  type="text" maxLength={60} name="description" placeholder="Describe the kind of data you need" className="login-field" />
                               {errors.description && touched.description && <p className="error">{errors.description}</p>}
+                              <input onChange={handleChange}  type="text" maxLength={60} name="reason" placeholder="What's the reason for your request?" className="login-field" />
+                              {errors.reason && touched.reason && <p className="error">{errors.reason}</p>}
                           { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Request</button>}
                           { isLoading &&  <Loader/>}
                             </>
