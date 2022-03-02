@@ -230,7 +230,7 @@ const Dashboard = () => {
           >
             Add dataset
           </button>
-            <button onClick={()=>setShowPaperForm(true)} className="button button__light">Upload paper</button>
+            <button onClick={()=>setShowPaperForm(true)} className="button button__light">Publication</button>
              
         </div>
    </div>
@@ -247,7 +247,7 @@ const Dashboard = () => {
         </div>
         <div onClick={()=>setActiveLink("papers")} className="link--item">
         <FaNewspaper size={30}  />
-        <a href="#" className={`${activeLink === "papers" ? "link active--link": "link"}`}>Uploaded Papers</a>
+        <a href="#" className={`${activeLink === "papers" ? "link active--link": "link"}`}>Publications</a>
         </div>
         <div onClick={()=>setActiveLink("projects")} className="link--item">
         <AiFillProject size={30}  />
