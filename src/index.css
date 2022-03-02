@@ -307,8 +307,9 @@ display: none;
   height: 150px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   background: rgba(0, 142, 64, 0.9);
+  padding-inline: 2rem;
 
 }
 
@@ -320,7 +321,22 @@ display: none;
 }
 
 
+.socials{
+  width: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
 
+.social{
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: white;
+}
 
 
 .data-hero{
@@ -784,7 +800,6 @@ padding-block: 3rem;
     top: -280px;
   }
   .paper-works{
-    
     width: 100%;
     max-width: 1140px;
     display: grid;
