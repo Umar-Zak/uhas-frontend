@@ -669,6 +669,54 @@ padding-block: 3rem;
   color: black ;
 }
 
+
+
+.student-paper{
+  width: 100%;
+  display: block;
+}
+
+.ongoing-projects{
+  margin-top: 150px;
+  padding-inline: 2rem;
+}
+
+.ongoing-projects__title{
+  text-align: center;
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 5rem;
+}
+.ongoing-grid{
+  display: grid;
+  row-gap: 2rem;
+}
+.ongoing-project{
+  width: 100%;
+  border: 1px solid green;
+  border-radius: 7px;
+  padding-inline: 2rem;
+  padding-block: 3rem;
+  max-height: 150px;
+  overflow-y: scroll;
+}
+
+.project-name{
+  font-weight: 500;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+  line-height: 2rem;
+  text-align: center;
+  margin-bottom: 1.6rem;
+}
+
+.project-description{
+  font-weight: 300;
+  font-size: 1.4rem;
+  line-height: 2rem;
+}
+
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .announcement {
     -webkit-backdrop-filter: blur(40px);
@@ -762,6 +810,13 @@ padding-block: 3rem;
     overflow-y: scroll;
     padding-inline: 3rem;
 
+  }
+  .student-paper{
+    width: 400px;
+  }
+  .ongoing-grid{
+    grid-template-columns: repeat(3,1fr);
+    column-gap: 2rem;
   }
 }
 

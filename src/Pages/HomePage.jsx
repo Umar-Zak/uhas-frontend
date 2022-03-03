@@ -5,10 +5,8 @@ import * as Yup from "yup"
 import {MdAccountCircle} from "react-icons/md"
 import {MdCancel} from "react-icons/md"
  import {login,logout,getCurrentUser} from "../utils/auth"
- import { getDataSets, getPapers, requestData } from '../utils/questionaire'
-import briefCase from "../assets/brief-case.svg"
+ import { getDataSets, getPapers, requestData,getProject } from '../utils/questionaire'
 import Idea from "../assets/Idea.svg"
-import Lines from "../assets/lines.svg"
 import Footer from '../components/Footer'
 import Loader from '../components/Loader'
 
@@ -32,10 +30,11 @@ const HomePage = () => {
     const [announcements, SetAnnouncements] = useState([])
     const [selectedDataSet,setSelectedDataSet] = useState("")
     const [works,setWorks] = useState([])
-
+    const [projects,setProjects] = useState([])
     useEffect(()=>{
         getDataSets(SetAnnouncements)
         getPapers(setWorks)
+        getProject(setProjects)
     },[])
 
    
@@ -166,7 +165,7 @@ const HomePage = () => {
                              {studentWorks.length === 0 && <p style={{fontSize:"13px"}}>No students papers at the moment</p>}
                              {
                                 studentWorks.map((work)=>(
-                                   <a style={{width:"400px",display:"block"}} href={`${work.file}`} target="_blank">
+                                   <a className="student-paper" href={`${work.file}`} target="_blank">
                                         <div className="news">
                                     <div className="simple-flex">
                                         <img src={Idea} alt="" className="idea" />
@@ -218,6 +217,19 @@ const HomePage = () => {
                          </div>
                      </div>
                     
+                 </div>
+                 <div className="ongoing-projects block">
+                 <h3 className="ongoing-projects__title">
+                    Our Ongoing Projects
+                    </h3>
+                    <div className="ongoing-grid">
+                       {projects.map(pro=>(
+                        <div className="ongoing-project">
+                        <h6 className="project-name">{pro.title}</h6>
+                        <p className="project-description">{pro.description}</p>
+                        </div>
+                       ))}
+                    </div>
                  </div>
              <Footer/>
             </>
