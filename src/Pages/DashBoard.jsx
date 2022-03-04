@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as Yup from "yup"
 import {Formik} from "formik"
 import {MdCancel} from "react-icons/md"
-import {AiFillPlusCircle} from "react-icons/ai"
+import {AiFillPlusCircle,AiFillFileZip} from "react-icons/ai"
 import {FaChevronCircleLeft} from "react-icons/fa"
 import {GrOverview} from "react-icons/gr"
 import {AiFillProject} from "react-icons/ai"
@@ -11,10 +11,8 @@ import {FaNewspaper} from "react-icons/fa"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
@@ -24,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject} from '../utils/questionaire';
+import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -142,6 +140,7 @@ const Dashboard = () => {
     const [datasets,setDataSets] = useState([])
     const [papers,setPapers] = useState([])
     const [projects,setProjects] = useState([])
+    const [zips,setZips] = useState([])
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -164,6 +163,7 @@ const Dashboard = () => {
         getDataSets(setDataSets)
         getPapers(setPapers)
         getProject(setProjects)
+        getZips(setZips)
     },[])
    
 
@@ -206,14 +206,14 @@ const Dashboard = () => {
    
           {getCurrentUser().isAdmin &&   <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
             <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
-       {getCurrentUser().isAdmin &&  <button
+       <button
             title="Export Excel"
             className="button button__primary"
             style={{marginRight:"15px"}}
             onClick={()=>setShowZipForm(true)}
           >
            Upload zips
-          </button>}
+          </button>
         {getCurrentUser().isAdmin && <button
             title="Export Excel"
             className="button button__light"
@@ -222,14 +222,14 @@ const Dashboard = () => {
           >
             Add project
           </button>}
-        <button
+        { getCurrentUser().isAdmin && <button
             title="Export Excel"
             className="button button__light"
             style={{marginRight:"15px"}}
             onClick={()=>setShowDatasetForm(true)}
           >
             Add dataset
-          </button>
+          </button>}
             <button onClick={()=>setShowPaperForm(true)} className="button button__light">Publication</button>
              
         </div>
@@ -252,6 +252,10 @@ const Dashboard = () => {
         <div onClick={()=>setActiveLink("projects")} className="link--item">
         <AiFillProject size={30}  />
         <a href="#" className={`${activeLink === "projects" ? "link active--link": "link"}`}>Ongoing Projects</a>
+        </div>
+        <div onClick={()=>setActiveLink("zip")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Zip Files</a>
         </div>
     </div>
 }
@@ -437,6 +441,32 @@ const Dashboard = () => {
         </TableBody>
       </Table>
     </div>
+    }
+    {
+      activeLink === "zip" &&
+      <div className="dashboard">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>File Link</TableCell>
+            <TableCell align="left">Upload Date</TableCell>
+            <TableCell align="left">Download</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {zips.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell align="left">{row.file}</TableCell>
+              <TableCell align="left">{row.day_posted.toString().substr(0,10)}</TableCell>
+              <TableCell align="left"><a href={`${row.file}`}  style={{background:"green",width:"100px",color:"white",padding:"4px",display:"inline-block"}} className="button">Download</a> </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      </div>
     }
 </div>
 

@@ -155,6 +155,11 @@ export const postProject = async (body,setLoading)=>{
     setProjects(data)
    }
 
+   export const getZips = async (setZips)=>{
+    const {data} = await http.get("/zips")
+    setZips(data)
+   }
+
    export const deleteDataSet = async id =>{
     const jwt = localStorage.getItem("token")
     try {
