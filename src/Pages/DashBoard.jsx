@@ -183,6 +183,7 @@ const Dashboard = () => {
         .startsWith(search.toLowerCase()) || ques?.collected_on.toString().startsWith(search))
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
    
+    console.log(questionnaire)
    
    return ( <>
    <div className="dashboard--header">
