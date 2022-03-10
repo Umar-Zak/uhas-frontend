@@ -340,7 +340,7 @@ const Dashboard = () => {
          active === "requests" &&
          <div className="data">
          <div className="data-search">
-              <h2 className="data-overview">Active Users</h2>
+              <h2 className="data-overview">Data Requests</h2>
               <input onChange={({target})=>handleSearchUser(target.value)} placeholder="Search data" type="text" className="search-input" />
           </div>
           <table className="table table-hover">
@@ -350,15 +350,17 @@ const Dashboard = () => {
                       <th scope="col">Email Address</th>
                       <th scope="col">Phone Number</th>
                       <th scope="col">Description</th>
+                      <th scope="col">Reasons</th>
                   </tr>
               </thead>
               <tbody>
-                 {requests.map(({ name,email,phone,_id,description})=>(
+                 {requests.map(({ name,email,phone,_id,description,reason})=>(
                       <tr className='t__row' key={_id}>
                       <td>{name}</td>
                       <td>{email}</td>
                       <td>{phone}</td>
                       <td>{description}</td>
+                      <td>{reason || "None"}</td>
                   </tr>
                  ))}
               </tbody>
