@@ -718,6 +718,29 @@ padding-block: 3rem;
 }
 
 
+.search-by{
+  display: flex;
+  align-items: center;
+  width: 60%;
+  justify-content: space-around;
+}
+
+.search-tip{
+ padding-block: 1rem;
+ outline: none;
+ padding-inline: 2rem;
+ border: 1px solid green;
+ border-radius: 10px;
+ color: #008e40;
+ font-weight: 400;
+ font-size: 1.6rem;
+}
+
+.active-tip{
+  background: green;
+  color: white;
+}
+
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .announcement {
     -webkit-backdrop-filter: blur(40px);

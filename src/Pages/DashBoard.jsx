@@ -141,6 +141,7 @@ const Dashboard = () => {
     const [papers,setPapers] = useState([])
     const [projects,setProjects] = useState([])
     const [zips,setZips] = useState([])
+    const [searchTip,setSearchTip] = useState("id")
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -176,14 +177,43 @@ const Dashboard = () => {
     if (questionnaire.length > 0)  transformedData = transformQuestionnaire(questionnaire)
     
 
+    switch (searchTip){
+      
+      case "year":{
+        questionnaire = questionnaire.
+        filter(ques=> new Date(ques.collected_on).getFullYear()?.toString().startsWith(search))
+        break
+      }
 
-    questionnaire = questionnaire.
-    filter(ques=>ques.womanId
-        .toLowerCase()
-        .startsWith(search.toLowerCase()) || ques?.collected_on.toString().startsWith(search))
+      case "month":{
+        questionnaire = questionnaire.
+        filter(ques=> (new Date(ques.collected_on)
+        .getUTCMonth()+1).toString().startsWith(search) && 
+        new Date(ques.collected_on).getFullYear()=== new Date().getFullYear())
+        break
+      }
+      case "date":{
+        questionnaire = questionnaire.
+        filter(ques=> ques.collected_on.toString().startsWith(search))
+       break
+      }
+      default:{
+       if(search){
+        questionnaire = questionnaire.
+        filter(ques => search && ques.womanId.toLowerCase() === search.toLowerCase())
+       }
+       else {
+        questionnaire = questionnaire.
+        filter(ques => ques.womanId.toLowerCase().startsWith(search.toLowerCase()))
+        console.log(questionnaire)
+       }
+      }
+    }
+
+
+    
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
    
-    console.log(questionnaire)
    
    return ( <>
    <div className="dashboard--header">
@@ -283,7 +313,13 @@ const Dashboard = () => {
          <div className="data">
          <div className="data-search">
               <h2 className="data-overview">Data Overview</h2>
-              <input onChange={({target})=>handleSearch(target.value)} placeholder="Search by ID or date" type="text" className="search-input" />
+             <div className="search-by">
+               <button onClick={()=>setSearchTip("id")} className={`${searchTip === "id"? "search-tip active-tip":"search-tip"}`}>ID</button>
+               <button onClick={()=>setSearchTip("year")} className={`${searchTip === "year"? "search-tip active-tip":"search-tip"}`}>Year</button>
+               <button onClick={()=>setSearchTip("month")} className={`${searchTip === "month"? "search-tip active-tip":"search-tip"}`}>Month</button>
+               <button onClick={()=>setSearchTip("date")} className={`${searchTip === "date"? "search-tip active-tip":"search-tip"}`}>Date</button>
+             <input onChange={({target})=>handleSearch(target.value)} placeholder="Search by ID or date" type="text" className="search-input" />
+             </div>
           </div>
           <table className="table table-responsive table-hover">
               <thead>
