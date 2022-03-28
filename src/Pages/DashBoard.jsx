@@ -205,7 +205,6 @@ const Dashboard = () => {
        else {
         questionnaire = questionnaire.
         filter(ques => ques.womanId.toLowerCase().startsWith(search.toLowerCase()))
-        console.log(questionnaire)
        }
       }
     }
@@ -287,6 +286,10 @@ const Dashboard = () => {
         <div onClick={()=>setActiveLink("zip")} className="link--item">
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Zip Files</a>
+        </div>
+        <div onClick={()=>navigate("/second-questionaire")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Take Questionnaire 2</a>
         </div>
     </div>
 }

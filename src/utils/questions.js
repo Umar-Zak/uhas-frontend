@@ -1125,6 +1125,157 @@ const questions  = [
 ]
 
 
+const secondQuestions  = [
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"101",
+        quest:`Full name of Data Collector/ Research Assistant`,
+        options:[
+            {
+                type:"text",
+                ans:"Full Name"
+            }
+        ]
+    },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"102",
+        quest:`Name of District`,
+        options:[
+            {
+                type:"text",
+                ans:"District"
+            }
+        ]
+    },
+    
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"103",
+        quest:`Name of Sub-districtt`,
+        options:[
+            {
+                type:"text",
+                ans:"Sub-district"
+            }
+        ]
+    },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"104",
+        quest:`Name of Town where the School is Located?`,
+        options:[
+            {
+                type:"text",
+                ans:"Town"
+            }
+        ]
+    },
+  
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"105",
+        quest:`Name of Institution/ School`,
+        options:[
+            {
+                type:"text",
+                ans:"Institution"
+            }
+        ]
+    },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"106",
+        quest:`Institution type: Public/Private`,
+        options:[
+            { label:"A",
+                type:"radio",
+                ans:"Public"
+            },
+            { label:"B",
+                type:"radio",
+                ans:"Private"
+            },
+        ]
+    },
+    {
+        section:"Section A: Background Information",
+        number:"107",
+        quest:`Institution Level: Primary/JHS/SHS/Tertiary`,
+        options:[
+            { label:"A",
+                type:"radio",
+                ans:"Pre-School"
+            },
+            { label:"B",
+            type:"radio",
+            ans:"Primary"
+        },
+        { label:"C",
+        type:"radio",
+        ans:"Junior High"
+    },
+            { label:"D",
+            type:"radio",
+            ans:"Senior High"
+        },
+        { label:"E",
+        type:"radio",
+        ans:"Vocational School"
+        },
+        { label:"F",
+        type:"radio",
+        ans:"Vocational School"
+        },
+        { label:"G",
+        type:"radio",
+        ans:"Teacher Training College"
+        },
+        { label:"H",
+        type:"radio",
+        ans:"Nurses Training College"
+        },
+        { label:"I",
+        type:"radio",
+        ans:"Techical University"
+        },
+        { label:"J",
+        type:"radio",
+        ans:"University"
+        },
+            
+        ]
+    },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"108",
+        quest:`Coordinate from kobocollect`,
+        options:[
+            {
+                type:"number",
+                ans:"latitude (x.y °)"
+            }
+        ]
+    },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"108",
+        quest:`Coordinate from kobocollect`,
+        options:[
+            {
+                type:"number",
+                ans:"longitude (x.y °)"
+            }
+        ]
+    },
+]
+
+
+
 export function getQuestions(){
     return questions
+}
+
+export function getSecondQuestions(){
+    return secondQuestions
 }

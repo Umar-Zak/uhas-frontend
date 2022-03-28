@@ -20,6 +20,22 @@ export const postQuestionnaire = async( values,setIsLoading)=>{
 
 }
 
+export const postSecondQuestionnaire = async( values,setIsLoading)=>{
+    setIsLoading(true)
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.post("/second-questions",{data:values})
+        toast.info("Data Submitted successfully")
+        window.location= "/second-questionaire"
+    } catch ({response}) {
+        setIsLoading(false)
+        if(response.status < 500)return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+
+}
 
 export const getQuestionnaire = async (setQuestionnaire)=>{
     const jwt = localStorage.getItem("token")

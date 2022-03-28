@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import Dashboard from './Pages/DashBoard';
 import OverView from './Pages/OverView';
+import SecondDataCollection from './Pages/SecondDataCollection';
 function App() {
   return (
     <>
@@ -16,6 +17,9 @@ function App() {
   <Routes>
    
     <Route path="/questionaire" element={<DataCollectionPage/>} >
+
+    </Route>
+    <Route path="/second-questionaire" element={ <SecondDataCollection/>} >
 
     </Route>
     <Route path="/dashboard" element={<Dashboard/>} >

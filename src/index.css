@@ -31,7 +31,7 @@ code {
 
 .hero{
   height: 70vh;
-  background: url(./assets/Image.svg);
+  background: url(./assets/background-uhas.jpeg);
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
@@ -121,8 +121,8 @@ code {
 }
 
 .hero__title{
-  font-weight: 700;
-  color: white;
+  font-weight: 500;
+  color: rgb(18, 131, 18);
   font-size: 2rem;
   text-align: center;
   text-transform: uppercase;
