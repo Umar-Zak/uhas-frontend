@@ -50,6 +50,19 @@ export const getQuestionnaire = async (setQuestionnaire)=>{
     }
 }
 
+export const getSecondQuestionnaire = async (setQuestionnaire)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get("/second-questions")
+        setQuestionnaire(data)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
 export const getQuestionById = async (id,setData) =>{
     const jwt = localStorage.getItem("token")
     try {

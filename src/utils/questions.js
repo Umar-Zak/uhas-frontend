@@ -1171,6 +1171,17 @@ const secondQuestions  = [
             }
         ]
     },
+    {
+        section:"School Mapping in Volta/Oti Regions, Ghana Final",
+        number:"101",
+        quest:`Description of the school using landmarks`,
+        options:[
+            {
+                type:"text",
+                ans:"Description"
+            }
+        ]
+    },
   
     {
         section:"School Mapping in Volta/Oti Regions, Ghana Final",

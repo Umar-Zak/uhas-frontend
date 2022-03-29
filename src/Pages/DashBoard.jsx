@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
-import { getQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips} from '../utils/questionaire';
+import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -131,6 +131,7 @@ const Dashboard = () => {
     const [showZipForm,setShowZipForm] = useState(false)
     const [requests,setRequests] = useState([])
     let [questionnaire,setQuestionaire] = useState([])
+    let [secondQuestionnaire,setSecondQuestionaire] = useState([])
     let [users,setUsers] = useState([])
     const [active,setActive] = useState("data")
     const [search,setSearch] = useState("")
@@ -165,6 +166,7 @@ const Dashboard = () => {
         getPapers(setPapers)
         getProject(setProjects)
         getZips(setZips)
+        getSecondQuestionnaire(setSecondQuestionaire)
     },[])
    
 
@@ -212,7 +214,7 @@ const Dashboard = () => {
 
     
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
-   
+   console.log(secondQuestionnaire)
    
    return ( <>
    <div className="dashboard--header">
@@ -291,6 +293,10 @@ const Dashboard = () => {
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Take Questionnaire 2</a>
         </div>
+        <div onClick={()=>setActiveLink("q2")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "q2" ? "link active--link": "link"}`}>Questionnaire 2</a>
+        </div>
     </div>
 }
    {getCurrentUser().isAdmin && activeLink === "overview" && <div className="dashboard">
@@ -344,6 +350,7 @@ const Dashboard = () => {
           </table>
          </div>
      }
+
 
 {
          active === "users" &&
@@ -504,6 +511,41 @@ const Dashboard = () => {
               <TableCell align="left">{row.file}</TableCell>
               <TableCell align="left">{row.day_posted.toString().substr(0,10)}</TableCell>
               <TableCell align="left"><a href={`${row.file}`}  style={{background:"green",width:"100px",color:"white",padding:"4px",display:"inline-block"}} className="button">Download</a> </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      </div>
+    }
+    {
+      activeLink === "q2" &&
+      <div className="dashboard">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+          {/* <TableCell>Collected On</TableCell> */}
+            <TableCell>Name of Researcher</TableCell>
+            <TableCell align="left">District</TableCell>
+            <TableCell align="left">Sub-District</TableCell>
+            <TableCell align="left">Town</TableCell>
+            <TableCell align="left">Description</TableCell>
+            <TableCell align="left">Institution</TableCell>
+            <TableCell align="left">Institution Type</TableCell>
+            <TableCell align="left">Institution Level</TableCell>
+            <TableCell align="left">Latitude</TableCell>
+            <TableCell align="left">Longitude</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {secondQuestionnaire.map((row) => (
+            <TableRow
+              key={row._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              {/* <TableCell align="left">{row.collected_on?.toString().substr(0,10)}</TableCell> */}
+              {row.data?.map(d=>(
+                <TableCell align="left">{ d.answer}</TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
