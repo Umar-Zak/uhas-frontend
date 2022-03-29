@@ -533,7 +533,7 @@ const Dashboard = () => {
             <TableCell align="left">Institution Type</TableCell>
             <TableCell align="left">Institution Level</TableCell>
             <TableCell align="left">Latitude</TableCell>
-            <TableCell align="left">Longitude</TableCell>
+            {/* <TableCell align="left">Longitude</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
