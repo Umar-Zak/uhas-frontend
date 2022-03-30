@@ -71,7 +71,10 @@ const SecondDataCollection = () => {
     }
 
     const handleFinish = async()=>{
-       await postSecondQuestionnaire(answers,setIsLoading)
+        const currentQuest = {...currentQuestion}
+        currentQuest.answer = answer
+       setAnswers([...answers,currentQuest])
+       await postSecondQuestionnaire([...answers,currentQuest],setIsLoading)
     }
 
     

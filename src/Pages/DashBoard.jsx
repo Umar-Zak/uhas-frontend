@@ -214,7 +214,6 @@ const Dashboard = () => {
 
     
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
-   console.log(secondQuestionnaire)
    
    return ( <>
    <div className="dashboard--header">
@@ -522,18 +521,18 @@ const Dashboard = () => {
       <div className="dashboard">
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          <TableRow>
+          <TableRow   >
           {/* <TableCell>Collected On</TableCell> */}
-            <TableCell>Name of Researcher</TableCell>
-            <TableCell align="left">District</TableCell>
-            <TableCell align="left">Sub-District</TableCell>
-            <TableCell align="left">Town</TableCell>
-            <TableCell align="left">Description</TableCell>
-            <TableCell align="left">Institution</TableCell>
-            <TableCell align="left">Institution Type</TableCell>
-            <TableCell align="left">Institution Level</TableCell>
-            <TableCell align="left">Latitude</TableCell>
-            {/* <TableCell align="left">Longitude</TableCell> */}
+            <TableCell style={{fontSize:"12px"}}>Name of Researcher</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">District</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Sub-District</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Town</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Description</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Institution</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Institution Type</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Institution Level</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Latitude</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Longitude</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
