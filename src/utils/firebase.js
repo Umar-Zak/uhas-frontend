@@ -51,7 +51,7 @@ export const uploadZip= async(body,setLoading)=>{
         getDownloadURL(ref(storage, body.file.name)).then(async url=>{
             try {
                 http.setJwt(jwt)
-                await http.post("/zip",{file:url})
+                await http.post("/zip",{file:url, name: body.name, description: body.description})
                 window.location = "/dashboard"
             } catch ({response}) {
                 setLoading(false)

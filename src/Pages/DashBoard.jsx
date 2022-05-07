@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
-import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus} from '../utils/questionaire';
+import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -47,7 +47,9 @@ const validatePaper = Yup.object().shape({
 })
 
 const validateZip = Yup.object().shape({
-    file:Yup.string().required("Zip file is required").label("Zip file")
+    file:Yup.string().required("Zip file is required").label("Zip file"),
+    name:Yup.string().required("Name of zip file is required").label("Name"),
+    description:Yup.string().required("Description of zip file is required")
 })
 
 const Dashboard = () => {
@@ -86,6 +88,27 @@ const Dashboard = () => {
           Swal.fire('Alright got it', '', 'info')
         }
       })
+   }
+
+
+   const handleDeleteQuestinnaire = async(event, id) => {
+    event.stopPropagation()
+    MySwal.fire({
+      title: 'Do you want to delete this Questinnaire? Action is not reversible',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      denyButtonText: `Quit`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteQuestionnaire(id)
+        getQuestionnaire(setQuestionaire)
+      } else if (result.isDenied) {
+        Swal.fire('Alright got it', '', 'info')
+      }
+    })
+
+    
    }
 
    const handleDeletePaper = id =>{
@@ -254,7 +277,7 @@ const Dashboard = () => {
             style={{marginRight:"15px"}}
             onClick={()=>setShowZipForm(true)}
           >
-           Upload zips
+           Upload datasets
           </button>
         {getCurrentUser().isAdmin && <button
             title="Export Excel"
@@ -264,14 +287,14 @@ const Dashboard = () => {
           >
             Add project
           </button>}
-        { getCurrentUser().isAdmin && <button
+        {/* { getCurrentUser().isAdmin && <button
             title="Export Excel"
             className="button button__light"
             style={{marginRight:"15px"}}
             onClick={()=>setShowDatasetForm(true)}
           >
             Add dataset
-          </button>}
+          </button>} */}
             <button onClick={()=>setShowPaperForm(true)} className="button button__light">Publication</button>
              
         </div>
@@ -346,6 +369,7 @@ const Dashboard = () => {
                       <th scope="col">Woman ID</th>
                       <th scope="col">Date</th>
                       <th scope="col">Officer</th>
+                      <th scope="col">Manage</th>
                   </tr>
               </thead>
               <tbody>
@@ -354,6 +378,7 @@ const Dashboard = () => {
                       <td>{womanId}</td>
                       <td>{collected_on.toString().substr(0,10)}</td>
                       <td>{officer.name}</td>
+                      <td>  {getCurrentUser().isAdmin && <td>  <button onClick={(event)=>handleDeleteQuestinnaire(event, _id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px", fontSize:"15px"}} className="button">Delete</button></td>}</td>
                   </tr>
                  ))}
               </tbody>
@@ -510,7 +535,8 @@ const Dashboard = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>File Link</TableCell>
+            <TableCell>File Name</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell align="left">Upload Date</TableCell>
             <TableCell align="left">Download</TableCell>
           </TableRow>
@@ -521,7 +547,8 @@ const Dashboard = () => {
               key={row._id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="left">{row.file}</TableCell>
+              <TableCell align="left">{row.name}</TableCell>
+              <TableCell align="left">{row.description}</TableCell>
               <TableCell align="left">{row.day_posted.toString().substr(0,10)}</TableCell>
               <TableCell align="left"><a href={`${row.file}`}  style={{background:"green",width:"100px",color:"white",padding:"4px",display:"inline-block"}} className="button">Download</a> </TableCell>
             </TableRow>
@@ -760,12 +787,16 @@ const Dashboard = () => {
                     <MdCancel onClick={()=>setShowZipForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
                      <Formik 
-                     initialValues={{file:"" }} 
+                     initialValues={{file:"", name:"", description:"" }} 
                      validationSchema={validateZip}
                      onSubmit={(values)=>uploadZip(values,setIsLoading)}
                      >
-                         {({handleSubmit,errors,touched,setFieldValue})=>(
+                         {({handleSubmit,errors,touched,setFieldValue, handleChange})=>(
                             <>
+                             <input onChange={handleChange} name="name" type="text" placeholder="Name of dataset" className="login-field" />
+                              {errors.name && touched.name && <p className="error">{errors.name}</p>}
+                              <textarea onChange={handleChange} name="description"   placeholder="Description of dataset" className="login-field"></textarea>
+                              {errors.description && touched.description && <p className="error">{errors.description}</p>}
                               <input accept='.zip' onChange={({target})=>setFieldValue("file",target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
                               {errors.file && touched.file && <p className="error">{errors.file}</p>}
                           { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Upload</button>}

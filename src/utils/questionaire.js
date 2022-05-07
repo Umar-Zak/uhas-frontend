@@ -201,6 +201,18 @@ export const postProject = async (body,setLoading)=>{
     }
    }
 
+   export const deleteQuestionnaire = async id =>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.delete(`/questionnaire/${id}`)
+    } catch ({response}) {
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
+
 
    export const deletePaper = async id =>{
     const jwt = localStorage.getItem("token")
