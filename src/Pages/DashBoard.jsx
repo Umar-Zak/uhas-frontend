@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
-import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips} from '../utils/questionaire';
+import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -42,7 +42,8 @@ const validateDataset = Yup.object().shape({
 const validatePaper = Yup.object().shape({
     heading:Yup.string().required("Paper heading is required").label("Heading"),
     file:Yup.string().required("Paper file is required").label("Paper file"),
-    type:Yup.string().required("Paper type is required").label("Paper type")
+    type:Yup.string().required("Paper type is required").label("Paper type"),
+    author:Yup.string().required("Author of the paper is required").label("Author")
 })
 
 const validateZip = Yup.object().shape({
@@ -104,6 +105,12 @@ const Dashboard = () => {
       })
    }
 
+   const handleTogglePaperStatus = async id => {
+     await togglePaperStatus(id)
+     getPapers(setPapers)
+   }
+
+
    const handleDeleteProject = id =>{
     MySwal.fire({
         title: 'Do you want to delete this project?',
@@ -119,6 +126,10 @@ const Dashboard = () => {
           Swal.fire('Alright got it', '', 'info')
         }
       })
+   }
+
+   const handleViewPaper = url =>{
+     window.open(url, "_blank")
    }
 
 
@@ -446,20 +457,23 @@ const Dashboard = () => {
             <TableCell align="left">Uploaded By</TableCell>
             <TableCell align="left">Upload Date</TableCell>
             <TableCell align="left">Paper Category Type</TableCell>
+            <TableCell align="left">Status</TableCell>
             <TableCell align="left">Manage</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {papers.map((row) => (
-            <TableRow
+            <TableRow 
               key={row._id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="left">{row.heading}</TableCell>
+              <TableCell onClick={()=> handleViewPaper(row.file)} style={{cursor:"pointer"}} align="left">{row.heading}</TableCell>
               <TableCell align="left">{row.user}</TableCell>
               <TableCell align="left">{row.date.toString().substr(0,10)}</TableCell>
               <TableCell align="left">{row.type}</TableCell>
-              <TableCell align="left"><button onClick={()=>handleDeletePaper(row._id)} style={{background:"red",width:"100px",color:"white",padding:"4px"}} className="button">Delete</button> </TableCell>
+              <TableCell align="left">{row.isApproved? "Approved" : "Unapproved"}</TableCell>
+              <TableCell align="left"><button onClick={()=>handleDeletePaper(row._id)} style={{background:"red",width:"100px",color:"white",padding:"4px", fontSize:"15px"}} className="button">Delete</button> </TableCell>
+              <TableCell align="left"><button onClick={() => handleTogglePaperStatus(row._id)}   style={{background:"grey",width:"100px",color:"white",padding:"4px",fontSize:"15px"}} className="button">{row.isApproved ? "Unapprove" : "Approve"}</button> </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -714,7 +728,7 @@ const Dashboard = () => {
                     <MdCancel onClick={()=>setShowPaperForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
                      <Formik 
-                     initialValues={{heading:"",file:"",type:"" }} 
+                     initialValues={{heading:"",file:"",type:"", author:"" }} 
                      validationSchema={validatePaper}
                      onSubmit={(values)=>uploadPaper(values,setIsLoading)}
                      >
@@ -730,6 +744,8 @@ const Dashboard = () => {
                                   <option value="faculty">Faculty</option>
                               </select>
                               {errors.type && touched.type && <p className="error">{errors.type}</p>}
+                              <input onChange={handleChange} name="author" type="text" placeholder="Author of Paper" className="login-field" />
+                              {errors.author && touched.author && <p className="error">{errors.author}</p>}
                           { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Post</button>}
                           { isLoading &&  <Loader/>}
                             </>

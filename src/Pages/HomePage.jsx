@@ -31,6 +31,8 @@ const HomePage = () => {
     const [selectedDataSet,setSelectedDataSet] = useState("")
     const [works,setWorks] = useState([])
     const [projects,setProjects] = useState([])
+    const [studentSearchText, setStudentSearchText] = useState("")
+    const [facultySearchText , setFacultySearchText] = useState("")
     useEffect(()=>{
         getDataSets(SetAnnouncements)
         getPapers(setWorks)
@@ -44,12 +46,27 @@ const HomePage = () => {
       navigate("/dashboard")
     }
 
-    const facultyWorks = works.filter(a=> a.type === "faculty")
-    const studentWorks = works.filter(a=> a.type === "student")
+    const handleStudentSearchFeature = event =>{
+        setStudentSearchText(event.target.value)
+    }
+
+    let facultyWorks = works.filter(a=> a.type === "faculty")
+    let faculties = [];
+
+    if(facultyWorks.length > 0)  faculties = [... new Set(facultyWorks.map(work => work.user))]
+    
+    if(facultySearchText) facultyWorks = facultyWorks.filter(work => work.user === facultySearchText)
+
+   
+
+    let studentWorks = works.filter(a=> a.type === "student").map(work => ({...work, keywords :work.heading.toLowerCase().split(" ")}))
     const toggleForm = ()=>{
         setShowForm(!showForm)
     }
   
+    if(studentSearchText) studentWorks = studentWorks.filter(work => work?.keywords?.includes(studentSearchText.toLowerCase()))
+    
+    
     return ( <>
                { showForm &&  <div className="login-container">
                      <Formik 
@@ -163,8 +180,11 @@ const HomePage = () => {
                              informed on our research works done by our prestigious students
                              </p>
                              {studentWorks.length === 0 && <p style={{fontSize:"13px"}}>No students papers at the moment</p>}
+                             <div style={{width:"70%", marginBlock:"30px"}}>
+                             <input  onKeyUp={(event) => handleStudentSearchFeature(event)} type="text" placeholder="Search by title keywords and hit Enter to begin search" className="login-field" />
+                             </div>
                              {
-                                studentWorks.map((work)=>(
+                                studentWorks.filter(work => work.isApproved).map((work)=>(
                                    <a className="student-paper" href={`${work.file}`} target="_blank">
                                         <div className="news">
                                     <div className="simple-flex">
@@ -191,8 +211,19 @@ const HomePage = () => {
                          <h3 className="paper-works__title">
                              Faculty Paper Works
                              </h3>
+                             <div style={{marginBlock:"30px"}}>
+                             <select onChange={({target}) => setFacultySearchText(target.value)} name="" id="" className="login-field">
+                              <option value="">All Faculties</option>
+                              {
+                                  faculties.map(faculty => (
+                                    <option value={`${faculty}`}>{faculty}</option>
+                                  ))
+                              }
+                             </select>
+                             </div>
+                            
                             {
-                                facultyWorks.map((work)=>(
+                                facultyWorks.filter(work => work.isApproved).map((work)=>(
                                    <a href={`${work.file}`} target="_blank">
                                         <div className="news">
                                     <div className="simple-flex">
