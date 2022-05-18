@@ -170,7 +170,7 @@ export const postProject = async (body,setLoading)=>{
    }
 
    export const getDataSets = async (setDataSet)=>{
-    const {data} = await http.get("/datasets")
+    const {data} = await http.get("/zips")
     setDataSet(data)
    }
 

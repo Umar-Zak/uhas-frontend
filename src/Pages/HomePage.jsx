@@ -33,6 +33,7 @@ const HomePage = () => {
     const [projects,setProjects] = useState([])
     const [studentSearchText, setStudentSearchText] = useState("")
     const [facultySearchText , setFacultySearchText] = useState("")
+    const [announcementSearchText, setAnnouncementSearchText] = useState("")
     useEffect(()=>{
         getDataSets(SetAnnouncements)
         getPapers(setWorks)
@@ -67,6 +68,10 @@ const HomePage = () => {
     if(studentSearchText) studentWorks = studentWorks.filter(work => work?.keywords?.includes(studentSearchText.toLowerCase()))
     
     
+    const filteredAnnouncements = announcements
+    .filter(ann => ann.name.toLowerCase()
+    .startsWith(announcementSearchText.toLowerCase()))
+
     return ( <>
                { showForm &&  <div className="login-container">
                      <Formik 
@@ -148,15 +153,16 @@ const HomePage = () => {
             <div className="announcement-container">
                 <div className="announcement">
                     <h2 className="announcement__title">Available Datasets</h2>
+                    <input onChange={({target:{value}}) => setAnnouncementSearchText(value)} placeholder="Search through data sets" style={{marginBottom: "40px"}} type="text" className="login-field" />
                  {
-                     announcements.map( (a,index) =>(
+                     filteredAnnouncements.map( (a,index) =>(
                         <a onClick={()=>setSelectedDataSet(a._id)} className={`${selectedDataSet === a._id ? "announcement__item expanded":"announcement__item"}`}>
                         <div className="simple-flex">
                              <div className="circle">
                                  <p className="circled__text">{index+1}</p>
                              </div>
                              <p className="announcement__text">
-                              {a.title}
+                              {a.name}
                              </p>
                              
                          </div>

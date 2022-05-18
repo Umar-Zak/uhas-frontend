@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
-import {deleteUser, getAllUsers, getCurrentUser, priv, register} from "../utils/auth"
+import {deleteUser, getAllUsers, getCurrentUser, makeGuest, priv, register} from "../utils/auth"
 import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
@@ -177,6 +177,7 @@ const Dashboard = () => {
     const [projects,setProjects] = useState([])
     const [zips,setZips] = useState([])
     const [searchTip,setSearchTip] = useState("id")
+    const [searchDataSet, setSearchDataSet] = useState("")
     const navigate = useNavigate()
 
     const goOverView = id =>{
@@ -249,6 +250,8 @@ const Dashboard = () => {
     
     users = users.filter(user=>user.username.toLowerCase().startsWith(searchUser.toLowerCase()))
    
+    const filteredZips = zips.filter(zip => zip.name.toLowerCase().startsWith(searchDataSet.toLowerCase()))
+
    return ( <>
    <div className="dashboard--header">
    <div style={{overflowX:"scroll"}} className="add-user-button">
@@ -270,7 +273,7 @@ const Dashboard = () => {
           </button>}
    
           {getCurrentUser().isAdmin &&   <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
-            <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />
+          {getCurrentUser().isAdmin || !getCurrentUser().isGuest &&  <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />}
        <button
             title="Export Excel"
             className="button button__primary"
@@ -306,10 +309,10 @@ const Dashboard = () => {
         <GrOverview size={30} color="green" />
         <a href="#" className={`${activeLink === "overview" ? "link active--link": "link"}`}>OverView</a>
         </div>
-        <div onClick={()=>setActiveLink("datasets")} className="link--item">
+        {/* <div onClick={()=>setActiveLink("datasets")} className="link--item">
         <BiData size={30}  />
         <a href="#" className={`${activeLink === "datasets" ? "link active--link": "link"}`}>Data Sets</a>
-        </div>
+        </div> */}
         <div onClick={()=>setActiveLink("papers")} className="link--item">
         <FaNewspaper size={30}  />
         <a href="#" className={`${activeLink === "papers" ? "link active--link": "link"}`}>Publications</a>
@@ -320,7 +323,7 @@ const Dashboard = () => {
         </div>
         <div onClick={()=>setActiveLink("zip")} className="link--item">
         <AiFillFileZip size={30}  />
-        <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Zip Files</a>
+        <a href="#" className={`${activeLink === "zip" ? "link active--link": "link"}`}>Data Sets</a>
         </div>
         <div onClick={()=>navigate("/second-questionaire")} className="link--item">
         <AiFillFileZip size={30}  />
@@ -405,12 +408,16 @@ const Dashboard = () => {
                   </tr>
               </thead>
               <tbody>
-                 {users.map(({username,email,created_at,_id,isAdmin})=>(
+                 {users.map(({username,email,created_at,_id,isAdmin, isGuest})=>(
                       <tr className='t__row' key={created_at}>
                       <td>{username}</td>
                       <td>{email}</td>
                       <td>{created_at.toString().substr(0,15)}</td>
-                      {getCurrentUser().isAdmin && <td><button onClick={()=> priv(_id,getAllUsers,setUsers)}  style={{background:"green",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">{isAdmin ? "Revoke":"Add"}</button></td>}
+                      {getCurrentUser().isAdmin && <td>
+                        <button onClick={()=> priv(_id,getAllUsers,setUsers)}  style={{background:"green",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">{isAdmin ? "Revoke":"Add"}</button>
+                       {!isGuest && <button onClick={()=> makeGuest(_id,getAllUsers,setUsers)} style={{background:"gray",width:"100px",color:"white",padding:"4px",marginBlock:"10px", borderRadius:"7px", marginInline:"5px"}}   >Make guest</button>}
+                      </td>
+                      }
                      {getCurrentUser().isAdmin && <td>  <button onClick={()=>handleDelete(_id)}  style={{background:"red",width:"100px",color:"white",padding:"4px",marginBlock:"10px"}} className="button">Delete</button></td>}
                   </tr>
                  ))}
@@ -532,6 +539,9 @@ const Dashboard = () => {
     {
       activeLink === "zip" &&
       <div className="dashboard">
+        <div style={{width: "35%", marginBottom: "40px"}}>
+        <input onChange={({target:{value}}) => setSearchDataSet(value)} placeholder='Search through datasets' type="text" className="login-field" />
+        </div>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -542,7 +552,7 @@ const Dashboard = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {zips.map((row) => (
+          {filteredZips.map((row) => (
             <TableRow
               key={row._id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
