@@ -34,11 +34,14 @@ const HomePage = () => {
     const [studentSearchText, setStudentSearchText] = useState("")
     const [facultySearchText , setFacultySearchText] = useState("")
     const [announcementSearchText, setAnnouncementSearchText] = useState("")
+    const [facultySText, setFacultySText] = useState("")
     useEffect(()=>{
         getDataSets(SetAnnouncements)
         getPapers(setWorks)
         getProject(setProjects)
     },[])
+
+ 
 
    
     const navigate = useNavigate()
@@ -51,14 +54,19 @@ const HomePage = () => {
         setStudentSearchText(event.target.value)
     }
 
-    let facultyWorks = works.filter(a=> a.type === "faculty")
+    const handleFacultySearch = event => {
+        setFacultySText(event.target.value)
+    }
+
+    let facultyWorks = works.filter(a=> a.type === "faculty").map(work => ({...work, keywords :work.heading.toLowerCase().split(" ")}))
     let faculties = [];
 
     if(facultyWorks.length > 0)  faculties = [... new Set(facultyWorks.map(work => work.user))]
     
+    if(facultySText) facultyWorks = facultyWorks.filter(work => work?.keywords?.includes(facultySText.toLowerCase()))
     if(facultySearchText) facultyWorks = facultyWorks.filter(work => work.user === facultySearchText)
 
-   
+  
 
     let studentWorks = works.filter(a=> a.type === "student").map(work => ({...work, keywords :work.heading.toLowerCase().split(" ")}))
     const toggleForm = ()=>{
@@ -67,8 +75,8 @@ const HomePage = () => {
   
     if(studentSearchText) studentWorks = studentWorks.filter(work => work?.keywords?.includes(studentSearchText.toLowerCase()))
     
-    
-    const filteredAnnouncements = announcements
+    let filteredAnnouncements = announcements.filter(ann => ann.isApproved)
+    filteredAnnouncements = filteredAnnouncements
     .filter(ann => ann.name.toLowerCase()
     .startsWith(announcementSearchText.toLowerCase()))
 
@@ -218,7 +226,9 @@ const HomePage = () => {
                              Faculty Paper Works
                              </h3>
                              <div style={{marginBlock:"30px"}}>
+                                 <input placeholder="Search through data set" onChange={event => handleFacultySearch(event)} type="text" className="login-field" />
                              <select onChange={({target}) => setFacultySearchText(target.value)} name="" id="" className="login-field">
+
                               <option value="">All Faculties</option>
                               {
                                   faculties.map(faculty => (

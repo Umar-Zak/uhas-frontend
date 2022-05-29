@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, makeGuest, priv, register} from "../utils/auth"
-import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire} from '../utils/questionaire';
+import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire, toggleDataStatus} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 
 
@@ -132,6 +132,11 @@ const Dashboard = () => {
      await togglePaperStatus(id)
      getPapers(setPapers)
    }
+
+   const handleToggleDataStatus = async id => {
+    await toggleDataStatus(id)
+    getZips(setZips)
+  }
 
 
    const handleDeleteProject = id =>{
@@ -561,6 +566,7 @@ const Dashboard = () => {
               <TableCell align="left">{row.description}</TableCell>
               <TableCell align="left">{row.day_posted.toString().substr(0,10)}</TableCell>
               <TableCell align="left"><a href={`${row.file}`}  style={{background:"green",width:"100px",color:"white",padding:"4px",display:"inline-block"}} className="button">Download</a> </TableCell>
+              <TableCell align="left"><button onClick={() => handleToggleDataStatus (row._id)}  style={{background:"gray",width:"100px",color:"white",padding:"4px",display:"inline-block"}} className="button">{row.isApproved ? "Unapprove" : "Approve"}</button> </TableCell>
             </TableRow>
           ))}
         </TableBody>

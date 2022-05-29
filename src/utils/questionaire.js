@@ -249,3 +249,15 @@ export const postProject = async (body,setLoading)=>{
        toast.error("Unexpected error! Try again")
     }
    }
+
+   export const toggleDataStatus = async id =>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.put(`/approve-dataset/${id}`)
+    } catch ({response}) {
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
