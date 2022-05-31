@@ -18,12 +18,14 @@ import withReactContent from 'sweetalert2-react-content'
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import { useNavigate } from 'react-router-dom';
-
+import { Line } from '@ant-design/charts';
+import "@ant-design/flowchart/dist/index.css";
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, makeGuest, priv, register} from "../utils/auth"
 import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire, toggleDataStatus} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
+import AnalyticsPage from './AnalyticsPage';
 
 
 
@@ -160,7 +162,7 @@ const Dashboard = () => {
      window.open(url, "_blank")
    }
 
-
+  
     const [isLoading,setIsLoading] = useState(false)
     const [showForm,setShowForm] = useState(false)
     const [showFileForm,setShowFileForm] = useState(false)
@@ -184,6 +186,26 @@ const Dashboard = () => {
     const [searchTip,setSearchTip] = useState("id")
     const [searchDataSet, setSearchDataSet] = useState("")
     const navigate = useNavigate()
+
+
+    const data = [
+      { year: 'Overall Data', value: questionnaire.length },
+      { year: 'Total Users', value: users.length },
+      { year: 'Data Requests', value: requests.length },
+      { year: 'Publications', value: papers.length },
+      { year: 'Datasets', value: zips.length },
+      { year: 'Projects', value: projects.length},
+    ];
+  
+    const config = {
+      data,
+      xField: 'year',
+      yField: 'value',
+      point: {
+        size: 7,
+        shape: 'diamond',
+      },
+    };
 
     const goOverView = id =>{
         navigate(`/overview/${id}`)
@@ -338,11 +360,15 @@ const Dashboard = () => {
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "q2" ? "link active--link": "link"}`}>Questionnaire 2</a>
         </div>
+        <div onClick={()=>setActiveLink("analytics")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "analytics" ? "link active--link": "link"}`}>Analytics</a>
+        </div>
     </div>
 }
    {getCurrentUser().isAdmin && activeLink === "overview" && <div className="dashboard">
        
-      
+   
         <div className="counter-grid">
         <div onClick={()=>setActive("data")} className={`${active === "data"? "counter counter--orange active-counter":"counter counter--orange"}`}>
                 <h3 className="counter__title">Overall Data</h3>
@@ -606,6 +632,12 @@ const Dashboard = () => {
           ))}
         </TableBody>
       </Table>
+      </div>
+    }
+    {
+      activeLink === "analytics" &&
+      <div className="dashboard">
+        <Line {...config} />
       </div>
     }
 </div>

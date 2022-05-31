@@ -10,6 +10,7 @@ import {
 import Dashboard from './Pages/DashBoard';
 import OverView from './Pages/OverView';
 import SecondDataCollection from './Pages/SecondDataCollection';
+import AnalyticsPage from './Pages/AnalyticsPage';
 function App() {
   return (
     <>
