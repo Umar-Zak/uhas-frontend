@@ -300,7 +300,7 @@ const Dashboard = () => {
           </button>}
    
           {getCurrentUser().isAdmin &&   <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
-          {getCurrentUser().isAdmin || !getCurrentUser().isGuest &&  <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />}
+          {getCurrentUser().isAdmin || <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />}
        <button
             title="Export Excel"
             className="button button__primary"
