@@ -187,7 +187,24 @@ const Dashboard = () => {
     const [searchDataSet, setSearchDataSet] = useState("")
     const navigate = useNavigate()
 
+    const computeAverage = data => {
+      let average = 0
+      if(data.length === 0) return 0
 
+      data.forEach(d => {
+        average += d
+      })
+
+      return average
+    }
+
+    const ages = questionnaire.map(ques => ques.age)
+    const weight = questionnaire.map(ques => ques.weight)
+    const height = questionnaire.map(ques => ques.height)
+    const fats = questionnaire.map(ques => ques.fat)
+    
+   
+    
     const data = [
       { year: 'Overall Data', value: questionnaire.length },
       { year: 'Total Users', value: users.length },
@@ -638,6 +655,14 @@ const Dashboard = () => {
       activeLink === "analytics" &&
       <div className="dashboard">
         <Line {...config} />
+       <div style={{marginTop:"100px"}}>
+       <AnalyticsPage 
+       age={ages.length? computeAverage(ages)/ages.length : 0} 
+       fat={fats.length? computeAverage(fats)/fats.length : 0}
+       height={height.length? computeAverage(height)/height.length : 0}
+       weight={weight.length? computeAverage(weight)/weight.length : 0}
+       />
+       </div>
       </div>
     }
 </div>
