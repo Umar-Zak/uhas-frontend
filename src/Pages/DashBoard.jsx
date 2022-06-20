@@ -23,7 +23,7 @@ import "@ant-design/flowchart/dist/index.css";
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import {deleteUser, getAllUsers, getCurrentUser, makeGuest, priv, register} from "../utils/auth"
-import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire, toggleDataStatus} from '../utils/questionaire';
+import { getQuestionnaire,getSecondQuestionnaire, transformQuestionnaire ,uploadFile,getRequests,postDataSet,postProject, getDataSets, deleteDataSet, getPapers, deletePaper, getProject, deleteProject, getZips, togglePaperStatus, deleteQuestionnaire, toggleDataStatus, addStudent, getAllStudents, getSurveyQuestions, postSurvey, deleteStudent} from '../utils/questionaire';
 import { uploadPaper,uploadZip } from '../utils/firebase';
 import AnalyticsPage from './AnalyticsPage';
 
@@ -46,6 +46,9 @@ const validatePaper = Yup.object().shape({
     file:Yup.string().required("Paper file is required").label("Paper file"),
     type:Yup.string().required("Paper type is required").label("Paper type"),
     author:Yup.string().required("Author of the paper is required").label("Author")
+})
+const validateStudent = Yup.object().shape({
+  name:Yup.string().required("Name of student is required").label("Student")
 })
 
 const validateZip = Yup.object().shape({
@@ -170,6 +173,7 @@ const Dashboard = () => {
     const [showProjectForm,setShowProjectForm] = useState(false)
     const [showPaperForm,setShowPaperForm] = useState(false)
     const [showZipForm,setShowZipForm] = useState(false)
+    const [showStudentForm, setShowStudentForm] = useState(false)
     const [requests,setRequests] = useState([])
     let [questionnaire,setQuestionaire] = useState([])
     let [secondQuestionnaire,setSecondQuestionaire] = useState([])
@@ -185,6 +189,17 @@ const Dashboard = () => {
     const [zips,setZips] = useState([])
     const [searchTip,setSearchTip] = useState("id")
     const [searchDataSet, setSearchDataSet] = useState("")
+    const [students, setStudents] = useState([])
+    const [showQuesForm, setShowQuesForm] = useState(false)
+    const [selectedStudent, setSelectedStudent] = useState("")
+    const [survey, setSurvey] = useState([])
+    const [index, setIndex] = useState(0)
+    const [selectedOption, setSelectecOption] = useState("")
+    const [answers, setAnswers] = useState([])
+    const [currentQuestion, setCurrentQuestion] = useState({})
+
+    
+
     const navigate = useNavigate()
 
     const computeAverage = data => {
@@ -236,6 +251,30 @@ const Dashboard = () => {
     const handleSearchUser = text =>{
         setSearchUser(text)
     }
+
+    const handleNext = () => {
+      if(index > survey.length - 1 || !selectedOption) return
+      const answer = {answer: selectedOption, question: currentQuestion._id}
+      setAnswers([...answers, answer])
+      setIndex(index + 1)
+      setCurrentQuestion(survey[index + 1])
+    }
+
+    const handleFinish = async () => {
+      const body = {
+        answers: 
+        [...answers, 
+          {question: currentQuestion._id, answer: selectedOption}],
+          student: selectedStudent
+        }
+        await postSurvey(body, setIsLoading)
+    }
+
+   const handleStartSurvey = (id) => {
+      setSelectedStudent(id)
+      setCurrentQuestion(survey[index])
+      setShowQuesForm(true)
+    }
          
     useEffect(()=>{
         getQuestionnaire(setQuestionaire)
@@ -246,8 +285,11 @@ const Dashboard = () => {
         getProject(setProjects)
         getZips(setZips)
         getSecondQuestionnaire(setSecondQuestionaire)
+        getAllStudents(setStudents)
+        getSurveyQuestions("A", setSurvey)
     },[])
    
+
 
    const excelExport = () => {
     if (_export.current !== null) {
@@ -380,6 +422,14 @@ const Dashboard = () => {
         <div onClick={()=>setActiveLink("analytics")} className="link--item">
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "analytics" ? "link active--link": "link"}`}>Analytics</a>
+        </div>
+        <div onClick={()=>setShowStudentForm(true)} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "student" ? "link active--link": "link"}`}>Add student</a>
+        </div>
+        <div onClick={()=>setActiveLink("student")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "student" ? "link active--link": "link"}`}>Student profiles</a>
         </div>
     </div>
 }
@@ -665,6 +715,42 @@ const Dashboard = () => {
        </div>
       </div>
     }
+
+{
+      activeLink === "student" &&
+      <div className="dashboard">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow   >
+          {/* <TableCell>Collected On</TableCell> */}
+            <TableCell style={{fontSize:"12px"}}>Name of Student</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Status</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Action</TableCell>
+            
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {
+          students.map(stu => (
+            <TableRow
+              key={stu._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+                <TableCell align="left">{ stu.name}</TableCell>
+                <TableCell align="left">{stu.hasTakenSurvey? "Taken" : "Not Taken"}</TableCell>
+                <TableCell align="left">
+                 { stu.hasTakenSurvey && <button onClick={() => navigate(`/survey/${stu._id}`)}   style={{background:"green",width:"140px",color:"white",padding:"4px",marginBlock:"10px", fontSize:"15px"}} className="button">View</button>}
+                 {!stu.hasTakenSurvey && <button onClick={() =>handleStartSurvey(stu._id)}   style={{background:"green",width:"140px",color:"white",padding:"4px",marginBlock:"10px", fontSize:"15px"}} className="button">Take questionnaire</button>}
+                 <button onClick={() => deleteStudent(stu._id)} style={{background:"red",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">Delete</button>
+                </TableCell>
+            </TableRow>
+          ))
+        }
+        </TableBody>
+      </Table>
+      </div>
+    }
+
 </div>
 
 <div hidden>
@@ -886,10 +972,84 @@ const Dashboard = () => {
                  </div>
                  <input accept='.xlsx' onChange={({target})=>setFile(target.files[0])}  name="file" type="file" placeholder=" " className="login-field" />
                  { !isLoading &&  <button disabled={!file}  onClick={()=>uploadFile(file,setIsLoading,setShowFileForm)}  className="button button__primary button__full">Upload</button>}
-                 { isLoading &&  <Loader/>}
+                 { isLoading &&  <Loader/>
+                 }
 
 
 
+                </div>}
+
+                { showStudentForm &&  <div className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowStudentForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{name: "" }} 
+                     validationSchema={validateStudent}
+                     onSubmit={(values)=>addStudent(setIsLoading, values)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                              <input onChange={handleChange} name="name" type="text" placeholder="Name of student" className="login-field" />
+                              {errors.name && touched.name && <p className="error">{errors.name}</p>}
+                          { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Post</button>}
+                          { isLoading &&  <Loader/>}
+                            </>
+                            
+                         )}
+                     </Formik>
+                </div>}
+
+                { showQuesForm &&  <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
+                 <div className="cancel-container">
+                    <MdCancel onClick={()=>setShowQuesForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
+                 </div>
+                     <Formik 
+                     initialValues={{name: "" }} 
+                     validationSchema={validateStudent}
+                     onSubmit={(values)=>addStudent(setIsLoading, values)}
+                     >
+                         {({handleChange,handleSubmit,errors,touched})=>(
+                            <>
+                  
+                  {<div className="question-container">
+       <h3 className="question__category"> { currentQuestion.title + " " + currentQuestion.section}</h3>
+       <div className="simple-flex question-flex">
+           <div className="question__number">
+               <p>{currentQuestion.number}</p>
+           </div>
+           <p className="question">
+           {currentQuestion.question}
+           </p>
+       </div>
+       {
+           currentQuestion?.options?.map((option,index) =>(
+           <>
+            {option.type==="radio" &&(<div key={index}   className="simple-flex answer-flex">
+            <div onClick={() => setSelectecOption(option.value)} className={`answer__label ${selectedOption === option.value? "active-answer" : "answer__label"}`}>
+                <p>{index + 1}</p>
+            </div>
+            <p className="answer">{option.value}</p>
+        </div>)}
+        {option.type!=="radio" && <input key={index} onChange={({target}) => setSelectecOption(target.value)}  className="question-text" type={option.type} placeholder={option.value} /> }
+           </>
+           )
+          
+           )
+       }
+     
+   </div>}
+   <div className="next-container">
+    <button style={{marginRight:"15px"}} onClick={()=>navigate("/dashboard")} className="button button__light button__normal">Quit</button>
+ {!isLoading && index !== (survey.length -1) && <button onClick={handleNext}  className="button button__primary button__normal">Next</button>}
+ {!isLoading && index === (survey.length -1) && <button onClick={handleFinish}  className="button button__primary button__normal">Finish</button>}
+ { isLoading && <Loader/>}
+  </div>xx
+
+        </>
+                            
+                         )}
+                     </Formik>
                 </div>}
      
     <Footer/>

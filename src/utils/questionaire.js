@@ -261,3 +261,123 @@ export const postProject = async (body,setLoading)=>{
        toast.error("Unexpected error! Try again")
     }
    }
+
+   export const addStudent = async (setIsLoading,body) =>{
+    const jwt = localStorage.getItem("token")
+    setIsLoading(true)
+    try {
+        http.setJwt(jwt)
+        await http.post(`/second/profile`, body)
+        toast.info("Student added successfully")
+       setTimeout(() => {
+        window.location = "/dashboard"
+       },2000)
+    } catch ({response}) {
+        setIsLoading(false)
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
+
+   export const getAllStudents = async (setStudents)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get("/second/get/profiles")
+        setStudents(data)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
+export const getSurveyQuestions = async (section, setSurvey)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/${section}`)
+        setSurvey(data)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getSurveys = async (section)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/${section}`)
+       return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const postSurvey = async (body, setIsLoading)=>{
+    const jwt = localStorage.getItem("token")
+    setIsLoading(true)
+    try {
+        http.setJwt(jwt)
+         await http.post(`/second/answer`, body)
+        toast.info("Submitted successfully")
+        setTimeout(() => {
+            window.location = "/dashboard"
+        }, 2000)
+    } catch ({response}) {
+        setIsLoading(false)
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
+export const getStudentAnswers = async(id) => {
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/get/answered/${id}`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const deleteStudent = async(id) => {
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.delete(`/second/profile/${id}`)
+        toast.info("Deleted successfully")
+        setTimeout(() => {
+            window.location = "/dashboard"
+        }, 1000)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const editSurvey = async (body, id, setShowForm)=>{
+    if(!id) return alert("No id", body)
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.put(`/second/answer/${id}`, body)
+        toast.info("Edited successfully")
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}

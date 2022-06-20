@@ -11,6 +11,7 @@ import Dashboard from './Pages/DashBoard';
 import OverView from './Pages/OverView';
 import SecondDataCollection from './Pages/SecondDataCollection';
 import AnalyticsPage from './Pages/AnalyticsPage';
+import SurveyPage from './Pages/SurveyPage';
 function App() {
   return (
     <>
@@ -27,6 +28,9 @@ function App() {
       
     </Route>
     <Route path="/overview/:id" element={<OverView/>} >
+      
+    </Route>
+    <Route path="/survey/:id" element={<SurveyPage/>} >
       
     </Route>
     <Route path="/" element={<HomePage/>}>
