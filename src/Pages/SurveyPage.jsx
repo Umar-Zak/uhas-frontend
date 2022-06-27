@@ -255,6 +255,33 @@ function SurveyPage(props) {
               </tbody>
               </table>
                 </div>
+
+                <div className="section-a section">
+                 {sectionD.length === 0 &&   <button onClick={() => handleStartSurvey("D")} style={{marginBottom: "10px"}} className="button button-primary">Take Section D</button>}
+          {sectionD.length > 0 && <h3 className="basic-data">{sectionD[0].question.title}</h3>}
+        <table className="table table-responsive table-hover">
+              <thead>
+                  <tr >
+                      <th scope="col">Date Taken</th>
+                      <th scope="col">Question</th>
+                      <th scope="col">Answer</th>
+                      <th scope="col">Edit</th>
+                  </tr>
+              </thead>
+              
+              <tbody>
+               {
+                sectionC.map(ans => (
+                    <tr>
+                        <td>{ans.posted_on.toString().substr(0, 10)}</td>
+                        <td>{ans.question.question}</td>
+                        <td>{ans.answer}</td>
+                    </tr>
+                ))
+               }
+              </tbody>
+              </table>
+                </div>
         </div></>
     );
 }
