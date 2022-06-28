@@ -12,6 +12,7 @@ import OverView from './Pages/OverView';
 import SecondDataCollection from './Pages/SecondDataCollection';
 import AnalyticsPage from './Pages/AnalyticsPage';
 import SurveyPage from './Pages/SurveyPage';
+import SchoolSurveyPage from './Pages/SchoolSurveyPage';
 function App() {
   return (
     <>
@@ -33,6 +34,9 @@ function App() {
     <Route path="/survey/:id" element={<SurveyPage/>} >
       
     </Route>
+    <Route path="/school/:id" element={<SchoolSurveyPage/>} >
+      
+      </Route>
     <Route path="/" element={<HomePage/>}>
     </Route>
   </Routes></>

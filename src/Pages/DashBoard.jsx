@@ -24,17 +24,7 @@ import AddProjectForm from '../components/AddProjectForm';
 import AddPaperForm from '../components/AddPaperForm';
 import AddStudentForm from '../components/AddStudentForm';
 import StudentQuestionnaireModal from '../components/StudentQuestionnaireModal';
-
-
-
-
-
-
-
-
-
-
-
+import AddSchool from '../components/AddSchool';
 
 const Dashboard = () => {
     const _export = React.useRef(null);
@@ -200,6 +190,10 @@ const Dashboard = () => {
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "student" ? "link active--link": "link"}`}>Student profiles</a>
         </div>
+        <div onClick={()=>setActiveLink("schools")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "schools" ? "link active--link": "link"}`}>Schools</a>
+        </div>
     </div>
 }
    {getCurrentUser().isAdmin && activeLink === "overview" && 
@@ -238,6 +232,10 @@ const Dashboard = () => {
      survey={survey}
      />
     }
+    {
+      activeLink === "schools" &&
+     <AddSchool/>
+    }
 
 </div>
 
@@ -251,11 +249,6 @@ const Dashboard = () => {
               />
 
                 }
-
-
-               
-
-
                 { showProjectForm && 
                  <AddProjectForm
                  setShowProjectForm={setShowProjectForm}
@@ -263,7 +256,6 @@ const Dashboard = () => {
                  setIsLoading={setIsLoading}
                  />
                 }
-
                 { showPaperForm && 
                <AddPaperForm
                isLoading={isLoading}
@@ -271,8 +263,6 @@ const Dashboard = () => {
                setShowPaperForm={setShowPaperForm}
                />
                 }
-
-
                 { showZipForm &&  
                <AddDataSetForm
                isLoading={isLoading}
@@ -280,7 +270,6 @@ const Dashboard = () => {
                setShowZipForm={setShowZipForm}
                />
                 }
-
                 {showFileForm &&  
                 <AddZipForm 
                 isLoading={isLoading}
@@ -291,7 +280,6 @@ const Dashboard = () => {
 
                 />
                 }
-
                 { showStudentForm && 
                <AddStudentForm
                isLoading={isLoading}

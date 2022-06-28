@@ -1,7 +1,6 @@
 import React from 'react';
 import {Formik} from "formik"
 import {useNavigate} from "react-router-dom"
-import * as Yup from "yup"
 import {MdCancel} from "react-icons/md"
 import Loader from './Loader';
 

@@ -280,6 +280,19 @@ export const postProject = async (body,setLoading)=>{
     }
    }
 
+   export const addSchool = async (body) => {
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.post(`/second/school-profile`, body)
+        toast.info("School added successfully")
+    } catch ({response}) {
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
+
    export const getAllStudents = async (setStudents)=>{
     const jwt = localStorage.getItem("token")
     try {
@@ -293,6 +306,19 @@ export const postProject = async (body,setLoading)=>{
     }
 }
 
+
+export const getSchools = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get("/second/get/schools")
+      return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
 
 export const getSurveyQuestions = async (section, setSurvey)=>{
     const jwt = localStorage.getItem("token")
@@ -338,12 +364,43 @@ export const postSurvey = async (body, setIsLoading)=>{
     }
 }
 
+export const postSchoolSurvey = async (body, setIsLoading)=>{
+    const jwt = localStorage.getItem("token")
+    setIsLoading(true)
+    try {
+        http.setJwt(jwt)
+         await http.post(`/second/school-answered`, body)
+        toast.info("Submitted successfully")
+        setTimeout(() => {
+            window.location = "/dashboard"
+        }, 2000)
+    } catch ({response}) {
+        setIsLoading(false)
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
 
 export const getStudentAnswers = async(id) => {
     const jwt = localStorage.getItem("token")
     try {
         http.setJwt(jwt)
         const {data} = await http.get(`/second/get/answered/${id}`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getSchoolAnswered = async(id) => {
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/school/answered/${id}`)
         return data
     } catch ({response}) {
         if(response.status < 500) return toast.error(response.data)
@@ -369,12 +426,51 @@ export const deleteStudent = async(id) => {
 }
 
 export const editSurvey = async (body, id, setShowForm)=>{
-    if(!id) return alert("No id", body)
     const jwt = localStorage.getItem("token")
     try {
         http.setJwt(jwt)
          await http.put(`/second/answer/${id}`, body)
         toast.info("Edited successfully")
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
+export const editSchoolSurvey = async (body, id, setShowForm)=>{
+   
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.put(`/second/school-answer/${id}`, body)
+        toast.info("Edited successfully")
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const deleteSchool = async id =>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        await http.delete(`/second/school/${id}`)
+    } catch ({response}) {
+       if(response.status < 500) return toast.error(response.data)
+   
+       toast.error("Unexpected error! Try again")
+    }
+   }
+
+   export const assignStudent = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.put(`/second/assign/school`, body)
+        toast.info("Assigned successfully")
     } catch ({response}) {
         if(response.status < 500) return toast.error(response.data)
 
