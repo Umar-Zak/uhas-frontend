@@ -84,7 +84,9 @@ function SurveyPage(props) {
     const sectionD = answers.filter(ans => ans.question.section.toLowerCase() === section.d.toLowerCase())
     return (
      <>
-        { showQuesForm &&  <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
+        { showQuesForm && 
+         <div className="modal">
+            <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
                  <div className="cancel-container">
                     <MdCancel onClick={() => setShowQuesForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
@@ -132,9 +134,14 @@ function SurveyPage(props) {
                             
                          )}
                      </Formik>
-                </div>}
+                </div>
+         </div>
+                
+                }
 
-                { showEditForm &&  <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
+                { showEditForm && 
+                <div className="modal">
+                     <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
                  <div className="cancel-container">
                     <MdCancel onClick={() => setShowEditForm(false)} style={{cursor:"pointer"}} size={25} color='white'/>
                  </div>
@@ -169,10 +176,11 @@ function SurveyPage(props) {
   </div>xx
 
         </>
-                            
                          )}
                      </Formik>
-                </div>}
+                </div>
+                </div>
+                }
      
         <div style={{minHeight: "700px"}} className="dashboard dashboard--large" >
                  <div className="section-a section">
@@ -222,6 +230,7 @@ function SurveyPage(props) {
                         <td>{ans.posted_on.toString().substr(0, 10)}</td>
                         <td>{ans.question.question}</td>
                         <td>{ans.answer}</td>
+                        <button onClick={() => handleEdit(ans._id)} style={{padding: "10px", marginBlock:"10px", width: "100px", borderRadius:"5px", outline:"none", marginInline:"10px", fontSize:"13px"}} >Edit</button>
                     </tr>
                 ))
                }
@@ -249,6 +258,7 @@ function SurveyPage(props) {
                         <td>{ans.posted_on.toString().substr(0, 10)}</td>
                         <td>{ans.question.question}</td>
                         <td>{ans.answer}</td>
+                        <button onClick={() => handleEdit(ans._id)} style={{padding: "10px", marginBlock:"10px", width: "100px", borderRadius:"5px", outline:"none", marginInline:"10px", fontSize:"13px"}} >Edit</button>
                     </tr>
                 ))
                }
@@ -271,11 +281,12 @@ function SurveyPage(props) {
               
               <tbody>
                {
-                sectionC.map(ans => (
+                sectionD.map(ans => (
                     <tr>
                         <td>{ans.posted_on.toString().substr(0, 10)}</td>
                         <td>{ans.question.question}</td>
                         <td>{ans.answer}</td>
+                        <button onClick={() => handleEdit(ans._id)} style={{padding: "10px", marginBlock:"10px", width: "100px", borderRadius:"5px", outline:"none", marginInline:"10px", fontSize:"13px"}} >Edit</button>
                     </tr>
                 ))
                }
