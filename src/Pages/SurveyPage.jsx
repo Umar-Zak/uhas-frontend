@@ -184,6 +184,7 @@ function SurveyPage(props) {
      
         <div style={{minHeight: "700px"}} className="dashboard dashboard--large" >
                  <div className="section-a section">
+                 <button onClick={() => handleStartSurvey("A")} style={{marginBottom: "10px"}} className="button button-primary">Take Section A</button>
           <h3 className="basic-data">{sectionA[0]?.question?.title}</h3>
         <table className="table table-responsive table-hover">
               <thead>
@@ -211,7 +212,7 @@ function SurveyPage(props) {
                 </div>
 
                 <div className="section-a section">
-                 {sectionB.length === 0 &&   <button onClick={() => handleStartSurvey("B")} style={{marginBottom: "10px"}} className="button button-primary">Take Section B</button>}
+            <button onClick={() => handleStartSurvey("B")} style={{marginBottom: "10px"}} className="button button-primary">Take Section B</button>
           {sectionB.length > 0 && <h3 className="basic-data">{sectionB[0].question.title}</h3>}
         <table className="table table-responsive table-hover">
               <thead>
@@ -239,7 +240,7 @@ function SurveyPage(props) {
                 </div>
 
                 <div className="section-a section">
-                 {sectionC.length === 0 &&   <button onClick={() => handleStartSurvey("C")} style={{marginBottom: "10px"}} className="button button-primary">Take Section C</button>}
+            <button onClick={() => handleStartSurvey("C")} style={{marginBottom: "10px"}} className="button button-primary">Take Section C</button>
           {sectionC.length > 0 && <h3 className="basic-data">{sectionC[0].question.title}</h3>}
         <table className="table table-responsive table-hover">
               <thead>
@@ -267,7 +268,7 @@ function SurveyPage(props) {
                 </div>
 
                 <div className="section-a section">
-                 {sectionD.length === 0 &&   <button onClick={() => handleStartSurvey("D")} style={{marginBottom: "10px"}} className="button button-primary">Take Section D</button>}
+               <button onClick={() => handleStartSurvey("D")} style={{marginBottom: "10px"}} className="button button-primary">Take Section D</button>
           {sectionD.length > 0 && <h3 className="basic-data">{sectionD[0].question.title}</h3>}
         <table className="table table-responsive table-hover">
               <thead>

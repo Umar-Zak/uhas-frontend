@@ -477,3 +477,126 @@ export const deleteSchool = async id =>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const getAllProjects = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const addProject = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.post(`/project`, body)
+       toast.success("Added project successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+export const deleteProjext = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.delete(`/project/${id}`)
+       toast.success("Project deleted successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
+export const getAllSections = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project/sections`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const addSection = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.post(`/project/section`, body)
+       toast.success("Added project successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const deleteSection = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.delete(`/project/section/${id}`)
+       toast.success("Project deleted successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const addQuestion = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.post(`/project/question`, body)
+       toast.success("Added questionnaire successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getSectionQuestions = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project/questions/${id}`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const deleteQuestion = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.delete(`/project/question/${id}`)
+       toast.success("Questionnaire deleted successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}

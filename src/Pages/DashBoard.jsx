@@ -25,6 +25,7 @@ import AddPaperForm from '../components/AddPaperForm';
 import AddStudentForm from '../components/AddStudentForm';
 import StudentQuestionnaireModal from '../components/StudentQuestionnaireModal';
 import AddSchool from '../components/AddSchool';
+import Projext from '../components/Projext';
 
 const Dashboard = () => {
     const _export = React.useRef(null);
@@ -194,6 +195,10 @@ const Dashboard = () => {
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "schools" ? "link active--link": "link"}`}>Schools</a>
         </div>
+        <div onClick={()=>setActiveLink("project")} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "project" ? "link active--link": "link"}`}>Projects</a>
+        </div>
     </div>
 }
    {getCurrentUser().isAdmin && activeLink === "overview" && 
@@ -235,6 +240,10 @@ const Dashboard = () => {
     {
       activeLink === "schools" &&
      <AddSchool/>
+    }
+    {
+      activeLink === "project" &&
+     <Projext/>
     }
 
 </div>

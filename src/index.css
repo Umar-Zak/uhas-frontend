@@ -29,6 +29,13 @@ code {
 }
 
 
+.form--header{
+  font-size: 2.3rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-bottom: 2rem;
+}
+
 .hero{
   height: 70vh;
   background: url(./assets/6.jpeg);
@@ -42,10 +49,14 @@ code {
   height: 100%;
   position: absolute;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   padding-top: 70px;
+}
+
+.modal--black{
+  background: #1f2442 ;
 }
 
 
@@ -543,6 +554,7 @@ padding-block: 3rem;
   padding-block: 4rem;
   /* margin-top: 100px; */
   overflow-x: scroll;
+  background: white;
 }
 .counter-grid{
   display: grid;
@@ -848,6 +860,12 @@ padding-block: 3rem;
 
 
 @media screen and (min-width:1024px) {
+
+  .question-form-container{
+    padding-inline: 200px;
+    margin-bottom: 5rem;
+  }
+
   .hero{
     height: 1000px;
   }

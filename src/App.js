@@ -13,6 +13,7 @@ import SecondDataCollection from './Pages/SecondDataCollection';
 import AnalyticsPage from './Pages/AnalyticsPage';
 import SurveyPage from './Pages/SurveyPage';
 import SchoolSurveyPage from './Pages/SchoolSurveyPage';
+import ProjectSectionPage from './Pages/ProjectSectionPage';
 function App() {
   return (
     <>
@@ -35,6 +36,9 @@ function App() {
       
     </Route>
     <Route path="/school/:id" element={<SchoolSurveyPage/>} >
+      
+      </Route>
+      <Route path="/projects/:id" element={<ProjectSectionPage/>} >
       
       </Route>
     <Route path="/" element={<HomePage/>}>
