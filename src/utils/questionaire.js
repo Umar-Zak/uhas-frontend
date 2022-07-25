@@ -600,3 +600,70 @@ export const deleteQuestion = async (id)=>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const addProjectStudent = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.post(`/project/add-student`, body)
+       toast.success("Added questionnaire successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getProjectStudents = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project/get-students/${id}`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
+export const getAllQuestions = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project/get-all-questions`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const postProjectSurvey = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+         await http.post(`/project/school-answered`, body)
+        toast.info("Submitted successfully")
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const getAllStudentAnswers = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} =  await http.get(`/project/answers/${id}`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}

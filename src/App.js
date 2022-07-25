@@ -10,10 +10,10 @@ import {
 import Dashboard from './Pages/DashBoard';
 import OverView from './Pages/OverView';
 import SecondDataCollection from './Pages/SecondDataCollection';
-import AnalyticsPage from './Pages/AnalyticsPage';
 import SurveyPage from './Pages/SurveyPage';
 import SchoolSurveyPage from './Pages/SchoolSurveyPage';
 import ProjectSectionPage from './Pages/ProjectSectionPage';
+import ProjectStudentOverviewPage from './Pages/ProjectStudentOverviewPage';
 function App() {
   return (
     <>
@@ -41,7 +41,11 @@ function App() {
       <Route path="/projects/:id" element={<ProjectSectionPage/>} >
       
       </Route>
+      <Route path="/projects/:id/:student" element={<ProjectStudentOverviewPage/>} >
+      
+      </Route>
     <Route path="/" element={<HomePage/>}>
+      
     </Route>
   </Routes></>
   );

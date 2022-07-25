@@ -54,7 +54,7 @@ const Dashboard = () => {
     const [selectedOption, setSelectecOption] = useState("")
     const [answers, setAnswers] = useState([])
     const [currentQuestion, setCurrentQuestion] = useState({})
-    const [active,setActive] = useState("data")
+    const [active,setActive] = useState("users")
     
 
     const navigate = useNavigate()
@@ -122,8 +122,8 @@ const Dashboard = () => {
             Export
           </button>}
    
-          {getCurrentUser().isAdmin &&   <button onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
-          {getCurrentUser().isAdmin && <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />}
+          {getCurrentUser().isAdmin &&   <button style={{marginRight: "15px"}} onClick={()=>setShowForm(!showForm)} className="button button__primary">Add user</button>}
+          {/* {getCurrentUser().isAdmin && <AiFillPlusCircle onClick={()=>navigate("/questionaire")} style={{marginInline:"15px",cursor:"pointer"}} size={40} />} */}
        <button
             title="Export Excel"
             className="button button__primary"

@@ -4,12 +4,12 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { useParams} from "react-router-dom"
+import { useParams, useNavigate} from "react-router-dom"
 import {MdCancel} from "react-icons/md"
 import {Formik} from "formik"
 import * as Yup from "yup"
 import Loader from '../components/Loader';
-import { getAllSections, addSection, deleteSection, addQuestion, getSectionQuestions, deleteQuestion } from '../utils/questionaire';
+import { getAllSections, addSection, deleteSection, addQuestion, getSectionQuestions, deleteQuestion, addProjectStudent, getProjectStudents } from '../utils/questionaire';
 
 const validateSchema = Yup.object().shape({
     tag: Yup.string().required("Section tag is required").label("Section tag"),
@@ -23,6 +23,10 @@ const validateQuestionnaire = Yup.object().shape({
     label: Yup.string().required("Feedback label is required").label("Feedback label")
 })
 
+const validateStudent = Yup.object().shape({
+  name: Yup.string().required("Student name is required").label("Name"),
+
+})
 
 function ProjectSectionPage(props) {
     const [showForm, setShowForm] = useState(false)
@@ -31,8 +35,13 @@ function ProjectSectionPage(props) {
     const [showQuestionModal, setShowQuestionModal] = useState(false)
     const [selectedSection, setSelectedSection] = useState({})
     const [questions, setQuestions] = useState([])
-
+    const [showStudentForm, setShowStudentForm] = useState(false)
+    const [showStudentTable ,setShowStudentTable] = useState(false)
+    const [students, setStudents] = useState([])
     const {id} = useParams()
+    const navigate = useNavigate()
+   
+   
     const loadSections = async () => {
         const data = await getAllSections()
         setSections(data)
@@ -40,6 +49,7 @@ function ProjectSectionPage(props) {
 
     useEffect(() => {
         loadSections()
+        loadStudents()
     }, [])
 
 
@@ -87,6 +97,24 @@ function ProjectSectionPage(props) {
     const handleDeleteQuestion = async id => {
         await deleteQuestion(id)
         await loadQuestions(selectedSection._id)
+    }
+
+
+    const handleAddProjectStudent = async name => {
+      setIsLoading(true)
+      await addProjectStudent({project_id: id, name})
+      await loadStudents()
+      window.location = `/projects/${id}`
+    }
+
+    const loadStudents = async () => {
+      const data = await getProjectStudents(id)
+      setStudents(data)
+    }
+
+
+    const handleViewStudent = student => {
+      navigate(`/projects/${id}/${student}`)
     }
 
     return (
@@ -152,7 +180,8 @@ function ProjectSectionPage(props) {
             >
                 <TableCell align="left">{ ques?.section?.title}</TableCell>
                 <TableCell align="left">{ques?.section?.tag}</TableCell>
-                <TableCell align="left">{ques?.question} </TableCell>
+                <TableCell align="left">{ques?.question}</TableCell>
+
                 <TableCell align="left">{ques?.options.map(op => op.value).join(", ")} </TableCell>
                 <TableCell align="left">
                  <button onClick={() => handleDeleteQuestion(ques._id)}  style={{background:"red",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">Delete</button>
@@ -165,28 +194,64 @@ function ProjectSectionPage(props) {
                 </div>
             </div>
             }
-            {
-                showForm &&
+           { showStudentTable && 
+          <div className="modal modal--black">
+            <div style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px"
+             }} className="cancel-container">
+                <MdCancel onClick={()=>setShowStudentTable(false)} style={{cursor:"pointer"}} size={35} color='white'/>
+                </div>
+            <div className="dashboard dashboard--large">
+            <Table sx={{ minWidth: 650, marginTop: "30px" }} aria-label="simple table">
+        <TableHead>
+          <TableRow   >
+            <TableCell style={{fontSize:"18px"}}>Name of Student</TableCell>
+            <TableCell style={{fontSize:"18px"}}>Project ID</TableCell>
+            <TableCell style={{fontSize:"18px"}}>Manage</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {
+          students.map(stu => (
+            <TableRow
+            style={{ fontSize: "16px" }}
+              key={stu._id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0} }}
+            >
+                <TableCell align="left">{ stu?.name}</TableCell>
+                <TableCell align="left">{ stu?._id?.toString().substr(0, 10)}</TableCell>
+                <TableCell align="left">
+                <button onClick={() => handleViewStudent(stu._id)} style={{background:"grey",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">View</button>
+                </TableCell>
+               
+            </TableRow>
+          ))
+        }
+        </TableBody>
+      </Table>
+                </div>
+            </div>
+            }
+             {
+                showStudentForm &&
                 <div className="modal">
                 <div className="login-container register-container">
                          <div className="cancel-container">
-                            <MdCancel onClick={()=>setShowForm(false)} style={{cursor:"pointer"}} size={25} color='black'/>
+                            <MdCancel onClick={()=>setShowStudentForm(false)} style={{cursor:"pointer"}} size={25} color='black'/>
                          </div>
                              <Formik 
                              initialValues={{
-                                tag: "" ,
-                                title:"",
-                                project:id
+                                name: "" ,
                             }} 
-                             validationSchema={validateSchema}
-                             onSubmit={(values)=>handleAddSection(values)}
+                             validationSchema={validateStudent}
+                             onSubmit={(values)=> handleAddProjectStudent(values.name)}
                              >
                                  {({handleChange,handleSubmit,errors,touched})=>(
                                     <>
-                                     <input type="text" onChange={handleChange} className="login-field" placeholder="Section tag"  name="tag"/>
-                                      {errors.tag && touched.tag && <p className="error">{errors.tag}</p>}
-                                      <input type="text" onChange={handleChange} className="login-field" placeholder="Section title"  name="title"/>
-                                      {errors.title && touched.title && <p className="error">{errors.title}</p>}
+                                     <input type="text" onChange={handleChange} className="login-field" placeholder="Student's name"  name="name"/>
+                                      {errors.name && touched.name && <p className="error">{errors.name}</p>}
                                   { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Submit</button>}
                                   { isLoading &&  <Loader/>}
                                     </>
@@ -196,7 +261,9 @@ function ProjectSectionPage(props) {
                         </div>
                 </div>
             }
-            <div onClick={() => setShowForm(true)} className="button button__primary">Add Section</div>
+            <button onClick={() => setShowForm(true)} className="button button__primary">Add Section</button>
+            <button style={{marginInline: "15px"}} onClick={() => setShowStudentTable(true)} className="button button__light">View Students</button>
+            <button onClick={() => setShowStudentForm(true)} className="button button__primary">Add Student</button>
         <Table sx={{ minWidth: 650, marginTop: "30px" }} aria-label="simple table">
         <TableHead>
           <TableRow   >
