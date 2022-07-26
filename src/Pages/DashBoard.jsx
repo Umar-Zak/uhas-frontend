@@ -26,6 +26,7 @@ import AddStudentForm from '../components/AddStudentForm';
 import StudentQuestionnaireModal from '../components/StudentQuestionnaireModal';
 import AddSchool from '../components/AddSchool';
 import Projext from '../components/Projext';
+import AddSection from '../components/AddSection';
 
 const Dashboard = () => {
     const _export = React.useRef(null);
@@ -55,7 +56,7 @@ const Dashboard = () => {
     const [answers, setAnswers] = useState([])
     const [currentQuestion, setCurrentQuestion] = useState({})
     const [active,setActive] = useState("users")
-    
+    const [showAddSection, setShowAddSection] = useState(false)
 
     const navigate = useNavigate()
 
@@ -199,6 +200,10 @@ const Dashboard = () => {
         <AiFillFileZip size={30}  />
         <a href="#" className={`${activeLink === "project" ? "link active--link": "link"}`}>Projects</a>
         </div>
+        <div onClick={()=>setShowAddSection(true)} className="link--item">
+        <AiFillFileZip size={30}  />
+        <a href="#" className={`${activeLink === "project" ? "link active--link": "link"}`}>Add Section</a>
+        </div>
     </div>
 }
    {getCurrentUser().isAdmin && activeLink === "overview" && 
@@ -256,8 +261,13 @@ const Dashboard = () => {
              setIsLoading={setIsLoading} 
              setShowForm={setShowForm}
               />
+             
 
                 }
+                 {
+                showAddSection &&
+                <AddSection setShowQuestionModal={setShowAddSection} />
+              }
                 { showProjectForm && 
                  <AddProjectForm
                  setShowProjectForm={setShowProjectForm}
