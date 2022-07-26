@@ -52,8 +52,8 @@ function SchoolSurveyPage(props) {
             {question: currentQuestion._id, answer: selectedOption}],
             student: id
           }
-        
           await postSchoolSurvey(body, setIsLoading)
+         window.location = `/survey/${id}`
       }
   
      const handleStartSurvey = async(section) => {

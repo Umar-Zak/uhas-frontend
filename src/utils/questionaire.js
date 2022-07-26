@@ -371,9 +371,6 @@ export const postSchoolSurvey = async (body, setIsLoading)=>{
         http.setJwt(jwt)
          await http.post(`/second/school-answered`, body)
         toast.info("Submitted successfully")
-        setTimeout(() => {
-            window.location = "/dashboard"
-        }, 2000)
     } catch ({response}) {
         setIsLoading(false)
         if(response.status < 500) return toast.error(response.data)
