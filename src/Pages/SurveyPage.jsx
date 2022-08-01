@@ -1,10 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useParams, useNavigate} from "react-router-dom"
 import { Formik } from 'formik';
 import {MdCancel} from "react-icons/md"
-import { editSurvey, getStudentAnswers, getSurveyQuestions, getSurveys, postSurvey } from '../utils/questionaire';
+import { editSurvey, getSchoolSections, getStudentAnswers, getSurveyQuestions, getSurveys, postSurvey } from '../utils/questionaire';
 import Loader from '../components/Loader';
+import ExportStudentData from '../components/ExportStudentData';
 function SurveyPage(props) {
+    const _export = useRef(null);
+
+
+    const excelExport = () => {
+     if (_export.current !== null) {
+       _export.current.save();
+     }
+   }
     const {id} = useParams()
     const navigate = useNavigate()
     const [answers, setAnswers] = useState([])
@@ -18,6 +27,8 @@ function SurveyPage(props) {
     const [editedAnswer, setEditedAnswer] = useState("")
     const [showEditForm, setShowEditForm] = useState(false)
     const [selectedQuestion, setSelectedQuestion] = useState({})
+    const [sections, setSections] = useState([])
+
     const section = {
         a: "A",
         b: "B",
@@ -30,8 +41,14 @@ function SurveyPage(props) {
         setAnswers(data)
     }
 
+    const loadSections = async () => {
+        const data = await getSchoolSections()
+        setSections(data)
+    }
+
     useEffect(() => {
         loadAnswers()
+        loadSections()
     },[])
 
 
@@ -82,8 +99,11 @@ function SurveyPage(props) {
     const sectionB = answers.filter(ans => ans.question.section.toLowerCase() === section.b.toLowerCase())
     const sectionC = answers.filter(ans => ans.question.section.toLowerCase() === section.c.toLowerCase())
     const sectionD = answers.filter(ans => ans.question.section.toLowerCase() === section.d.toLowerCase())
+    const transformedAnswers = answers.map(ans => ({posted_on: ans.posted_on.toString().substr(0,10), question: ans.question.question, answer: ans.answer}))
+  
     return (
      <>
+     <ExportStudentData exportRef={_export} transformedData={transformedAnswers} />
         { showQuesForm && 
          <div className="modal">
             <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
@@ -173,7 +193,7 @@ function SurveyPage(props) {
    <div className="next-container">
 <button onClick={saveEdit}  className="button button__primary button__normal">Save</button>
  { isLoading && <Loader/>}
-  </div>xx
+  </div>
 
         </>
                          )}
@@ -182,9 +202,10 @@ function SurveyPage(props) {
                 </div>
                 }
      
-        <div style={{minHeight: "700px"}} className="dashboard dashboard--large" >
+        <div style={{minHeight: "100%"}} className="dashboard dashboard--large" >
                  <div className="section-a section">
                  <button onClick={() => handleStartSurvey("A")} style={{marginBottom: "10px"}} className="button button-primary">Take Section A</button>
+                 <button onClick={excelExport} style={{marginBottom: "10px", marginLeft: "20px"}} className="button button__primary">Export</button>
           <h3 className="basic-data">{sectionA[0]?.question?.title}</h3>
         <table className="table table-responsive table-hover">
               <thead>
@@ -294,6 +315,40 @@ function SurveyPage(props) {
               </tbody>
               </table>
                 </div>
+
+                {
+                    sections.map(sec => (
+                        <div className="section-a section">
+                        <button onClick={() => handleStartSurvey(sec.name.toUpperCase())} style={{marginBottom: "10px"}} className="button button-primary">Take Section {sec.name.toUpperCase()}</button>
+                   <h3 className="basic-data">{answers.filter(ans => ans.question.section.toLowerCase() === sec.name.toLowerCase())[0]?.question?.title}</h3>
+                 <table className="table table-responsive table-hover">
+                       <thead>
+                           <tr >
+                               <th scope="col">Date Taken</th>
+                               <th scope="col">Question</th>
+                               <th scope="col">Answer</th>
+                               <th scope="col">Edit</th>
+                           </tr>
+                       </thead>
+                       
+                       <tbody>
+                        {
+                         answers.filter(ans => ans.question.section.toLowerCase() === sec.name.toLowerCase()).map(ans => (
+                             <tr>
+                                 <td>{ans.posted_on.toString().substr(0, 10)}</td>
+                                 <td>{ans.question.question}</td>
+                                 <td>{ans.answer}</td>
+                                 <button onClick={() => handleEdit(ans._id)} style={{padding: "10px", marginBlock:"10px", width: "100px", borderRadius:"5px", outline:"none", marginInline:"10px", fontSize:"13px"}} >Edit</button>
+                             </tr>
+                         ))
+                        }
+                       </tbody>
+                       </table>
+                         </div>
+                    )
+                    
+                    )
+                }
         </div></>
     );
 }

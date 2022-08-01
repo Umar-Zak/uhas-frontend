@@ -677,3 +677,16 @@ export const addSectionAndQuestionnaire = async (body)=>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const getSchoolSections = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/get/all-sections`)
+        return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}

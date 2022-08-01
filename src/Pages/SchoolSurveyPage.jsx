@@ -7,6 +7,7 @@ import Loader from '../components/Loader';
 
 
 function SchoolSurveyPage(props) {
+   
     const {id} = useParams()
     const navigate = useNavigate()
     const [answers, setAnswers] = useState([])
@@ -82,6 +83,8 @@ function SchoolSurveyPage(props) {
     const sectionG = answers.filter(ans => ans.question.section.toLowerCase() === section.g.toLowerCase())
     const sectionH = answers.filter(ans => ans.question.section.toLowerCase() === section.h.toLowerCase())
     const sectionI = answers.filter(ans => ans.question.section.toLowerCase() === section.i.toLowerCase())
+   
+   
     return (
      <>
         { showQuesForm &&  
