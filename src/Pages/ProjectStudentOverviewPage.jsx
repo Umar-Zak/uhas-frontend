@@ -1,12 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useParams, useNavigate} from "react-router-dom"
 import { Formik } from 'formik';
 import {MdCancel} from "react-icons/md"
 import { editSchoolSurvey, editSurvey, getAllQuestions, getAllSections, getAllStudentAnswers, getSchoolAnswered, getSurveys, postProjectSurvey, postSchoolSurvey } from '../utils/questionaire';
 import Loader from '../components/Loader';
-
+import ExportStudentData from "../components/ExportStudentData"
 
 function ProjectStudentOverviewPage(props) {
+    const _export = useRef(null);
+
+
     const {id, student} = useParams()
     const navigate = useNavigate()
     const [answers, setAnswers] = useState([])
@@ -23,10 +26,21 @@ function ProjectStudentOverviewPage(props) {
     const [sections, setSections] = useState([])
     const [allQuestions, setAllQuestions] = useState([])
     const [allAnswers, setAllAnswers] = useState([])
+
     const loadAnswers = async() => {
         const data = await getSchoolAnswered(id)
         setAnswers(data)
     }
+
+
+    const excelExport = () => {
+        if (_export.current !== null) {
+          _export.current.save();
+        }
+      }
+
+    const transformedAnswers = allAnswers.map(ans => 
+        ({answer: ans.answer, posted_on: ans.posted_on.toString().substr(0, 10), question: ans.question.question}))
 
 
     const loadSections = async () => {
@@ -43,6 +57,8 @@ function ProjectStudentOverviewPage(props) {
         const data = await getAllStudentAnswers(student)
         setAllAnswers(data)
     }
+
+   
 
     useEffect(() => {
         loadAnswers()
@@ -101,7 +117,8 @@ function ProjectStudentOverviewPage(props) {
     // const sectionH = answers.filter(ans => ans.question.section.toLowerCase() === section.h.toLowerCase())
     // const sectionI = answers.filter(ans => ans.question.section.toLowerCase() === section.i.toLowerCase())
     return (
-     <>
+        <>
+        <ExportStudentData exportRef={_export} transformedData={transformedAnswers} />
         { showQuesForm &&  
         <div className="modal">
             <div style={{width: "800px", height: "500px", overflowY: "scroll" }}  className="login-container register-container">
@@ -201,6 +218,7 @@ function ProjectStudentOverviewPage(props) {
                 }
      
         <div style={{minHeight: "700px"}} className="dashboard dashboard--large" >
+            <div onClick={excelExport} style={{marginBlock: "15px"}} className="button button__primary">Export Data</div>
             {
                 sections.map(section => (
                     <div className="section-a section">

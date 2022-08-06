@@ -14,24 +14,36 @@ const validateQuestionnaire = Yup.object().shape({
 
 function AddSection({setShowQuestionModal}) {
     const [isLoading, setIsLoading] = useState(false)
+    const [option, setOption] = useState("")
+    const [options, setOptions] = useState([])
 
     const handleAddSection = async (body) => {
+        if(body.feebackType === "radio" && options.length === 0) return alert("Your feedback must contain at least 1 option")
+        
         setIsLoading(true)
+
+        const opt = body.feebackType === "radio" ? options : [{
+            type: body.feebackType,
+            value: body.label
+        }]
+
         const payload = {
             question: body.question,
             section: body.section_title,
             title: body.section_tag,
-            options:[
-                {
-                    type: body.feebackType,
-                    value: body.label
-                }
-            ]
+            options:opt
         }
         await addSectionAndQuestionnaire(payload)
 
         window.location = "/dashboard"
     }
+    const addOption = () => {
+        if(!option) return alert("Input a valid option")
+  
+        const opt = {type: "radio", value: option}
+        setOptions([...options, opt])
+        setOption("")
+      }
 
     return (
         <div className="modal modal--black">
@@ -56,7 +68,7 @@ function AddSection({setShowQuestionModal}) {
                         validationSchema={validateQuestionnaire}
                         onSubmit={(values) => handleAddSection(values)}
                         >
-                            {({handleChange,handleSubmit,errors,touched})=>(
+                            {({handleChange,handleSubmit,errors,touched, values})=>(
                                <>
                                <input type="text" onChange={handleChange} className="login-field" placeholder="Section Title eg(A, B, C etc)"  name="section_title"/>
                                  {errors.section_title && touched.section_title && <p className="error">{errors.section_title}</p>}
@@ -71,6 +83,14 @@ function AddSection({setShowQuestionModal}) {
                                    <option value="number">Number Input</option>
                                  </select>
                                  {errors.feebackType && touched.feebackType && <p className="error">{errors.feebackType}</p>}
+                                 { values.feebackType === "radio" &&
+                                       <div style={{display: "flex", marginBlock:"20px", alignItems: "center"}}>
+                                        <div style={{width: "60%"}}>
+                                        <input type="text" value={option} onChange={(event) => setOption(event.target.value)} className="login-field" placeholder="Type option value here"/>
+                                        </div>
+                                          <button className="button" style={{marginLeft: "15px"}} onClick={addOption}>Add Option</button>
+                                       </div>
+                                    }
                                  <input type="text" onChange={handleChange} className="login-field" placeholder="Answer label"  name="label"/>
                                  {errors.label && touched.label && <p className="error">{errors.label}</p>}
                              { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Submit</button>}

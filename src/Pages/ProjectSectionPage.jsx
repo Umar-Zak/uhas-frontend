@@ -38,14 +38,18 @@ function ProjectSectionPage(props) {
     const [showStudentForm, setShowStudentForm] = useState(false)
     const [showStudentTable ,setShowStudentTable] = useState(false)
     const [students, setStudents] = useState([])
+    const [option, setOption] = useState("")
+    const [options, setOptions] = useState([])
+
     const {id} = useParams()
     const navigate = useNavigate()
    
    
     const loadSections = async () => {
         const data = await getAllSections()
-        setSections(data)
+        setSections(data.filter(sec => sec.project === id))
     }
+
 
     useEffect(() => {
         loadSections()
@@ -57,6 +61,7 @@ function ProjectSectionPage(props) {
         setIsLoading(true)
         await addSection(body)
         setShowForm(false)
+        setIsLoading(false)
         loadSections()
     }
 
@@ -68,7 +73,6 @@ function ProjectSectionPage(props) {
 
     const loadQuestions = async (id) => {
         const data = await getSectionQuestions(id)
-        console.log("DATA", data)
         setQuestions(data)
     }
 
@@ -78,17 +82,28 @@ function ProjectSectionPage(props) {
         setShowQuestionModal(true)
     }
 
+    const addOption = () => {
+      if(!option) return alert("Input a valid option")
+
+      const opt = {type: "radio", value: option}
+      setOptions([...options, opt])
+      setOption("")
+    }
+
     const handleAddQuestionnaire = async (body, form) => {
+      if(body.feebackType === "radio" && options.length === 0) return alert("Your feedback must contain at least 1 option")
+
         setIsLoading(true)
+
+        const opt = body.feebackType === "radio" ? options : [{
+          type: body.feebackType,
+          value: body.label
+      }]
+
         const payload = {
             section: selectedSection._id,
             question: body.question,
-            options:[
-                {
-                    type: body.feebackType,
-                    value: body.label
-                }
-            ]
+            options:opt
         }
         await addQuestion(payload)
         window.location = `/projects/${id}`
@@ -140,7 +155,7 @@ function ProjectSectionPage(props) {
                              validationSchema={validateQuestionnaire}
                              onSubmit={(values, form) => handleAddQuestionnaire(values, form)}
                              >
-                                 {({handleChange,handleSubmit,errors,touched})=>(
+                                 {({handleChange,handleSubmit,errors,touched, values})=>(
                                     <>
                                      <input type="text" onChange={handleChange} className="login-field" placeholder="Query"  name="question"/>
                                       {errors.question && touched.question && <p className="error">{errors.question}</p>}
@@ -151,6 +166,14 @@ function ProjectSectionPage(props) {
                                         <option value="number">Number Input</option>
                                       </select>
                                       {errors.feebackType && touched.feebackType && <p className="error">{errors.feebackType}</p>}
+                                    { values.feebackType === "radio" &&
+                                       <div style={{display: "flex", marginBlock:"20px", alignItems: "center"}}>
+                                        <div style={{width: "60%"}}>
+                                        <input type="text" value={option} onChange={(event) => setOption(event.target.value)} className="login-field" placeholder="Type option value here"/>
+                                        </div>
+                                          <button className="button" style={{marginLeft: "15px"}} onClick={addOption}>Add Option</button>
+                                       </div>
+                                    }
                                       <input type="text" onChange={handleChange} className="login-field" placeholder="Answer label"  name="label"/>
                                       {errors.label && touched.label && <p className="error">{errors.label}</p>}
                                   { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Submit</button>}
@@ -192,6 +215,38 @@ function ProjectSectionPage(props) {
         </TableBody>
       </Table>
                 </div>
+            </div>
+            }
+            { showForm && 
+          <div className="modal">
+            <div className="login-container register-container">
+          <div className="cancel-container">
+            <MdCancel onClick={()=>setShowForm(false)} style={{cursor:"pointer"}} size={25} color='black'/>
+          </div>
+        <Formik
+          initialValues={{
+            title: "",
+            tag:"",
+            project: id
+          }}
+          validationSchema={validateSchema}
+          onSubmit={values => handleAddSection(values)}
+          >
+              {({handleChange,handleSubmit,errors,touched})=>(
+                        <>
+                          <input type="text" onChange={handleChange} className="login-field" placeholder="Title(eg. A)"  name="title"/>
+                          {errors.title && touched.title && <p className="error">{errors.title}</p>}
+                          <input type="text" onChange={handleChange} className="login-field" placeholder="Section Tagline"  name="tag"/>
+                          {errors.tag && touched.tag && <p className="error">{errors.tag}</p>}
+                      { !isLoading &&  <button onClick={handleSubmit} className="button button__primary button__full">Submit</button>}
+                      { isLoading &&  <Loader/>}
+                        </>
+                        
+                )}
+
+                </Formik>
+                        </div>
+                
             </div>
             }
            { showStudentTable && 
