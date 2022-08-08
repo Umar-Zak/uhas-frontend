@@ -690,3 +690,17 @@ export const getSchoolSections = async ()=>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const deleteProjectStudent = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.delete(`/project/student/${id}`)
+       toast.success("Student delete successfully")
+
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}

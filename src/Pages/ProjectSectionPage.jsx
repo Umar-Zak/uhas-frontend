@@ -9,7 +9,7 @@ import {MdCancel} from "react-icons/md"
 import {Formik} from "formik"
 import * as Yup from "yup"
 import Loader from '../components/Loader';
-import { getAllSections, addSection, deleteSection, addQuestion, getSectionQuestions, deleteQuestion, addProjectStudent, getProjectStudents } from '../utils/questionaire';
+import { getAllSections, addSection, deleteSection, addQuestion, getSectionQuestions, deleteQuestion, addProjectStudent, getProjectStudents, deleteProjectStudent } from '../utils/questionaire';
 
 const validateSchema = Yup.object().shape({
     tag: Yup.string().required("Section tag is required").label("Section tag"),
@@ -128,6 +128,10 @@ function ProjectSectionPage(props) {
       setStudents(data)
     }
 
+    const handleDeleteStudent = async(id) => {
+      await deleteProjectStudent(id)
+      await loadStudents()
+    }
 
     const handleViewStudent = student => {
       navigate(`/projects/${id}/${student}`)
@@ -280,6 +284,7 @@ function ProjectSectionPage(props) {
                 <TableCell align="left">{ stu?._id?.toString().substr(0, 10)}</TableCell>
                 <TableCell align="left">
                 <button onClick={() => handleViewStudent(stu._id)} style={{background:"grey",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">View</button>
+                <button onClick={() => handleDeleteStudent(stu._id)} style={{background:"red",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">Delete</button>
                 </TableCell>
                
             </TableRow>
