@@ -123,8 +123,9 @@ function ProjectSectionPage(props) {
     }
 
     const loadStudents = async () => {
-      const data = await getProjectStudents(id)
-      setStudents(data.filter(stu => stu.project_id === id))
+      let data = await getProjectStudents(id)
+      data = data.filter(stu => stu.project_id.toString() === id.toString())
+      setStudents(data)
     }
 
 
