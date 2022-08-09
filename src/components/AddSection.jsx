@@ -1,9 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import {useNavigate} from "react-router-dom"
 import {Formik} from "formik"
 import * as Yup from "yup"
 import {MdCancel} from "react-icons/md"
 import Loader from './Loader';
-import { addSectionAndQuestionnaire } from '../utils/questionaire';
+import { addSectionAndQuestionnaire, deleteSurvey, getAllSurveys } from '../utils/questionaire';
 const validateQuestionnaire = Yup.object().shape({
     question: Yup.string().required("Query is required").label("Question"),
     feebackType: Yup.string().required("Feedback type is required").label("Feedback type"),
@@ -16,6 +22,21 @@ function AddSection({setShowQuestionModal}) {
     const [isLoading, setIsLoading] = useState(false)
     const [option, setOption] = useState("")
     const [options, setOptions] = useState([])
+    const [questions, setQuestions] = useState([])
+
+    useEffect(() => {
+        loadQuestions()
+    }, [])
+
+    const loadQuestions = async () => {
+        const data = await getAllSurveys()
+        setQuestions(data)
+    }
+
+    const handleDeleteSurvey = async (id) => {
+        await deleteSurvey(id)
+        await loadQuestions()
+    }
 
     const handleAddSection = async (body) => {
         if(body.feebackType === "radio" && options.length === 0) return alert("Your feedback must contain at least 1 option")
@@ -99,8 +120,31 @@ function AddSection({setShowQuestionModal}) {
                             )}
                         </Formik>
                             </div>
-                            </div>
-                        </div>
+
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow   >
+            <TableCell style={{fontSize:"12px"}}>Section</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Title</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Question</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">Action</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+            {
+                questions.map(ques => (
+            <TableRow   >
+            <TableCell style={{fontSize:"12px"}}>{ques.section}</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">{ques.title}</TableCell>
+            <TableCell  style={{fontSize:"12px"}} align="left">{ques.question}</TableCell>
+            <button onClick={() => handleDeleteSurvey(ques._id)} style={{background:"red",width:"140px",color:"white",padding:"4px",marginBlock:"10px", marginInline:"15px",fontSize:"15px"}} className="button">Delete</button>
+          </TableRow>
+                ))
+            }
+        </TableBody>
+      </Table>
+    </div>
+    </div>
     );
 }
 

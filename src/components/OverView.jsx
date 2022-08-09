@@ -115,6 +115,10 @@ function OverView({setActive, active}) {
        
    
         <div className="counter-grid">
+        <div onClick={()=>setActive("data")} className={`${active === "data"? "counter counter--orange active-counter":"counter counter--orange"}`}>
+                <h3 className="counter__title">Overall Data</h3>
+                <p className="counter__text">{questionnaire.length}</p>
+            </div>
             <div onClick={()=>setActive("users")} className={`${active === "users"? "counter  active-counter":"counter"}`}>
                 <h3 className="counter__title">Total Users</h3>
                 <p className="counter__text">{users.length}</p>

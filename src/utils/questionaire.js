@@ -346,6 +346,32 @@ export const getSurveys = async (section)=>{
     }
 }
 
+export const getAllSurveys = async ()=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+        const {data} = await http.get(`/second/get/all-questions`)
+       return data
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+export const deleteSurvey = async (id)=>{
+    const jwt = localStorage.getItem("token")
+    try {
+        http.setJwt(jwt)
+       await http.delete(`/second/question/${id}`)
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
+
+
 export const postSurvey = async (body, setIsLoading)=>{
     const jwt = localStorage.getItem("token")
     setIsLoading(true)
