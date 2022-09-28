@@ -2,14 +2,12 @@ import React, {useEffect, useState, useRef} from 'react';
 import {useParams, useNavigate} from "react-router-dom"
 import { Formik } from 'formik';
 import {MdCancel} from "react-icons/md"
-import { editSchoolSurvey, editSurvey, getAllQuestions, getAllSections, getAllStudentAnswers, getSchoolAnswered, getSurveys, postProjectSurvey, postSchoolSurvey } from '../utils/questionaire';
+import { editSchoolSurvey, editSurvey, getAllQuestions, getAllSections, getAllStudentAnswers, getSchoolAnswered, getSurveys, postProjectSurvey, postSchoolSurvey, uploadExcelData } from '../utils/questionaire';
 import Loader from '../components/Loader';
 import ExportStudentData from "../components/ExportStudentData"
 
 function ProjectStudentOverviewPage(props) {
     const _export = useRef(null);
-
-
     const {id, student} = useParams()
     const navigate = useNavigate()
     const [answers, setAnswers] = useState([])
@@ -26,7 +24,7 @@ function ProjectStudentOverviewPage(props) {
     const [sections, setSections] = useState([])
     const [allQuestions, setAllQuestions] = useState([])
     const [allAnswers, setAllAnswers] = useState([])
-
+    const [selectedSection, setSelectedSection]  = useState("")
     const loadAnswers = async() => {
         const data = await getSchoolAnswered(id)
         setAnswers(data)
@@ -112,6 +110,12 @@ function ProjectStudentOverviewPage(props) {
         loadAnswers()
       }
     
+      const handleUpload = async(file) => {
+        const body = {file: file, project_id: id, section: selectedSection}
+        await uploadExcelData(body)
+      }
+
+      console.log("All", allAnswers);
     // const sectionF = answers.filter(ans => ans.question.section.toLowerCase() === section.f.toLowerCase())
     // const sectionG = answers.filter(ans => ans.question.section.toLowerCase() === section.g.toLowerCase())
     // const sectionH = answers.filter(ans => ans.question.section.toLowerCase() === section.h.toLowerCase())
@@ -223,6 +227,10 @@ function ProjectStudentOverviewPage(props) {
                 sections.map(section => (
                     <div className="section-a section">
                <button onClick={() => handleStartSurvey(section._id)} style={{marginBottom: "10px"}} className="button button-primary">Take Section {section.title?.toUpperCase()}</button>
+              <div  className="button button-primary">
+                <label onClick={() => setSelectedSection(section.title)} htmlFor="test">Import</label>
+                <input onChange={event => handleUpload(event.target.files[0])} accept="*.xlsx"  id="test"  style={{opacity: 0}} type="file" />
+                </div>
              <h3 className="basic-data">SECTION {section.title?.toUpperCase()} {section.tag?.toUpperCase()}</h3>
            <table className="table table-responsive table-hover">
                  <thead>
@@ -236,7 +244,7 @@ function ProjectStudentOverviewPage(props) {
                  
                  <tbody>
                        {
-                        allAnswers.filter(ans => ans.question?.section?._id === section._id)
+                        allAnswers.filter(ans => ans.question?.section?.title?.toLowerCase() === section.title?.toLowerCase())
                         .map(ans => (
                             <tr>
                            <td>{ans.posted_on?.toString().substr(0, 10)}</td>

@@ -730,3 +730,20 @@ export const deleteProjectStudent = async (id)=>{
         toast.error("Unexpected error! Try again")
     }
 }
+
+export const uploadExcelData = async (body)=>{
+    const jwt = localStorage.getItem("token")
+    const formData = new FormData()
+    formData.append("file", body.file)
+    formData.append("project_id", body.project_id)
+    formData.append("section", body.section)
+    try {
+        http.setJwt(jwt)
+         await http.post(`/project/uploads`, formData)
+        toast.info("Submitted successfully")
+    } catch ({response}) {
+        if(response.status < 500) return toast.error(response.data)
+
+        toast.error("Unexpected error! Try again")
+    }
+}
